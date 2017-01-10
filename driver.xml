@@ -1,0 +1,124 @@
+<devicedata>
+  <copyright>Copyright 2016 Ecloud.  All rights reserved.</copyright>
+  <creator>Brustar</creator>
+  <manufacturer>Ecloud</manufacturer>
+  <name>Ecloud Tcp Client</name>
+  <model>Ecloud Tcp Client</model>
+  <created>12/04/2016 9:30 PM</created>
+  <modified>12/01/2017 9:30 PM</modified>
+  <version>1</version>
+  <small>devices_sm\c4.gif</small>
+  <large>devices_lg\c4.gif</large>
+  <control>lua_gen</control>
+  <controlmethod>ip</controlmethod>
+  <driver>DriverWorks</driver>
+  <templatedescription>Base Template, used in all templates.</templatedescription>
+  <combo>True</combo>
+  <OnlineCategory>others</OnlineCategory>
+  <proxies qty="1">
+    <proxy>base_template</proxy>
+  </proxies>
+  <config>
+    <power_management_method>AlwaysOn</power_management_method>
+    <power_command_delay>0</power_command_delay>
+    <power_delay>0</power_delay>
+    <power_command_needed>False</power_command_needed>
+    <script file="driver.lua" encryption="2" />
+    <actions>
+      <action>
+        <name>Display Globals</name>
+        <command>DisplayGlobals</command>
+      </action>
+      <action>
+        <name>Start Connect</name>
+        <command>TurnOn</command>
+      </action>
+      <action>
+        <name>Disconnect</name>
+        <command>TurnOff</command>
+      </action>
+      <action>
+        <name>Upload Info</name>
+        <command>GetState</command>
+      </action>
+    </actions>
+    <properties>
+      <property>
+        <name>Debug Level</name>
+        <type>LIST</type>
+        <readonly>false</readonly>
+        <default>2 - Warning</default>
+        <items>
+          <item>0 - Alert</item>
+          <item>1 - Error</item>
+          <item>2 - Warning</item>
+          <item>3 - Info</item>
+          <item>4 - Trace</item>
+          <item>5 - Debug</item>
+        </items>
+      </property>
+      <property>
+        <name>Debug Mode</name>
+        <type>LIST</type>
+        <readonly>false</readonly>
+        <default>Off</default>
+        <items>
+          <item>Off</item>
+          <item>Print</item>
+          <item>Log</item>
+          <item>Print and Log</item>
+        </items>
+      </property>
+      <property>
+        <name>IP Address</name>
+        <type>STRING</type>
+        <readonly>false</readonly>
+        <default>115.28.151.85</default>
+      </property>
+      <property>
+        <name>IP Port</name>
+        <type>STRING</type>
+        <readonly>false</readonly>
+        <default>8000</default>
+      </property>
+      <property>
+        <name>masterID</name>
+        <type>STRING</type>
+        <default>33025</default>
+        <readonly>false</readonly>
+      </property>
+      <property>
+        <name>Http Status</name>
+        <type>STRING</type>
+        <default>ready to connect</default>
+        <readonly>true</readonly>
+      </property>
+      <property>
+        <name>Aircondition ID</name>
+        <type>STRING</type>
+        <default>322</default>
+        <readonly>false</readonly>
+      </property>
+      <property>
+        <name>Nest ID</name>
+        <type>STRING</type>
+        <readonly>true</readonly>
+        <default></default>
+      </property>
+      <property>
+        <name>Tcp Status</name>
+        <type>STRING</type>
+        <default>ready to connect</default>
+        <readonly>true</readonly>
+      </property>
+    </properties>
+    <documentation file="documentation.rtf" />
+  </config>
+  <events>
+    <event>
+      <id>1</id>
+      <name>tcp event</name>
+      <description>New Description</description>
+    </event>
+  </events>
+</devicedata>
