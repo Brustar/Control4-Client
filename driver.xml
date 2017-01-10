@@ -26,20 +26,16 @@
     <script file="driver.lua" encryption="2" />
     <actions>
       <action>
-        <name>Display Globals</name>
-        <command>DisplayGlobals</command>
-      </action>
-      <action>
-        <name>Start Connect</name>
-        <command>TurnOn</command>
+        <name>Connect</name>
+        <command>Connect</command>
       </action>
       <action>
         <name>Disconnect</name>
-        <command>TurnOff</command>
+        <command>Disconnect</command>
       </action>
       <action>
         <name>Upload Info</name>
-        <command>GetState</command>
+        <command>Upload</command>
       </action>
     </actions>
     <properties>

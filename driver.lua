@@ -63,6 +63,10 @@ function OnPropertyChanged(sProperty)
 
 	local propertyValue = Properties[sProperty]
 	
+	if sProperty == "Http Status" and propertyValue == "upload success" then
+	   connectEcloudServer()
+	end
+	
 	-- Remove any spaces (trim the property)
 	local trimmedProperty = string.gsub(sProperty, " ", "")
 
@@ -149,17 +153,20 @@ function EX_CMD.LUA_ACTION(tParams)
 	end
 end
 
-function LUA_ACTION.TurnOn()
-     Dbg:Debug("Turn On " .. Properties["IP Address"])
-	
-	--[[ Create a network connection for the IP address in the property ]]--
-	C4:CreateNetworkConnection (MAIN_SOCKET_BINDINGID, Properties["IP Address"])
-	--[[ We are connecting to TCP port 2000 ]]--
-	C4:NetConnect(MAIN_SOCKET_BINDINGID, tonumber(Properties["IP Port"]), "TCP")
+function connectEcloudServer()
+    C4:CreateNetworkConnection (MAIN_SOCKET_BINDINGID, Properties["IP Address"])
+    C4:NetConnect(MAIN_SOCKET_BINDINGID, tonumber(Properties["IP Port"]), "TCP")
 end
 
-function LUA_ACTION.TurnOff()
-     Dbg:Debug("Turn Off " .. Properties["IP Address"])
+function LUA_ACTION.Connect()
+     Dbg:Debug("connectting " .. Properties["IP Address"])
+	
+	--[[ Create a network connection for the IP address in the property ]]--
+	--connectEcloudServer()
+end
+
+function LUA_ACTION.Disconnect()
+     Dbg:Debug("Disconnect " .. Properties["IP Address"])
 	
 	--[[ Create a network connection for the IP address in the property ]]--
 	C4:CreateNetworkConnection (MAIN_SOCKET_BINDINGID, Properties["IP Address"])
@@ -167,7 +174,7 @@ function LUA_ACTION.TurnOff()
 	C4:NetDisconnect(MAIN_SOCKET_BINDINGID, tonumber(Properties["IP Port"]), "TCP")
 end
 
-function LUA_ACTION.GetState()
+function LUA_ACTION.Upload()
      Dbg:Debug("upload info")
 	--upload info
      local proj = C4:GetProjectItems("LIMIT_DEVICE_DATA","NO_ROOT_TAGS")
@@ -252,40 +259,6 @@ function OnConnectionStatusChanged(idBinding, nPort, strStatus)
 		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["IP Port"]), pack:hex())
 	   end
     end
-end
-
---[[
-	LUA_ACTION.DisplayGlobals
-		Implementation of Action "Display Globals". Executed when selecting the "Display Globals" action within Composer.
-		Provided as an example for actions.
---]]
-function LUA_ACTION.DisplayGlobals()
-	print ("Global Variables")
-	print ("----------------------------")
-
-	for k,v in pairs(_G) do	-- globals`
-		if not (type(v) == "function") then
-			--print(k .. ":  " .. tostring(v))
-			if (string.find(k, "^g%L")  == 1) then
-				print(k .. ":  " .. tostring(v))
-				if (type(v) == "table") then
-					PrintTable(v, "   ")
-				end
-			end
-		end
-	end
-
-	print ("")
-end
-
-function PrintTable(tValue, sIndent)
-	sIndent = sIndent or "   "
-	for k,v in pairs(tValue) do
-		print(sIndent .. tostring(k) .. ":  " .. tostring(v))
-		if (type(v) == "table") then
-			PrintTable(v, sIndent .. "   ")
-		end
-	end
 end
 
 ---------------------------------------------------------------------
