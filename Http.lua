@@ -17,10 +17,7 @@ function Http:create(data)
     
     function http:IsSucceeded(responseData)
 	   local json = JSON:decode(responseData)
-	   if json.errortype == "0" then
-		  return true
-	   end
-	   return false
+	   return json.errortype == "0"
     end
 
     function http:ReceivedAsync(ticketId, strData, responseCode, tHeaders)
