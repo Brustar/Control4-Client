@@ -5,8 +5,8 @@ function Http:create(data)
 
     local http = {}
     http.data = data
-    local host = "115.28.151.85"
-    local port = 8082
+    local host = Properties["HTTP Address"]
+    local port = tonumber(Properties["HTTP Port"])
     
     function http:upload()
 	   local postData = string.format("opttype=1&hostid=%s&jsondata=%s",Properties["masterID"],self.data)

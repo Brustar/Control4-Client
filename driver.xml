@@ -23,7 +23,7 @@
     <power_command_delay>0</power_command_delay>
     <power_delay>0</power_delay>
     <power_command_needed>False</power_command_needed>
-    <script file="driver.lua" encryption="2" />
+    <script file="driver.lua" />
     <actions>
       <action>
         <name>Connect</name>
@@ -66,28 +66,34 @@
         </items>
       </property>
       <property>
-        <name>IP Address</name>
+        <name>TCP Address</name>
         <type>STRING</type>
         <readonly>false</readonly>
         <default>115.28.151.85</default>
       </property>
       <property>
-        <name>IP Port</name>
+        <name>TCP Port</name>
         <type>STRING</type>
         <readonly>false</readonly>
         <default>8000</default>
+      </property>
+      <property>
+        <name>HTTP Address</name>
+        <type>STRING</type>
+        <default>115.28.151.85</default>
+        <readonly>false</readonly>
+      </property>
+      <property>
+        <name>HTTP Port</name>
+        <type>STRING</type>
+        <default>8082</default>
+        <readonly>false</readonly>
       </property>
       <property>
         <name>masterID</name>
         <type>STRING</type>
         <default>33025</default>
         <readonly>false</readonly>
-      </property>
-      <property>
-        <name>Http Status</name>
-        <type>STRING</type>
-        <default>ready to connect</default>
-        <readonly>true</readonly>
       </property>
       <property>
         <name>Aircondition ID</name>
@@ -100,6 +106,12 @@
         <type>STRING</type>
         <readonly>true</readonly>
         <default></default>
+      </property>
+      <property>
+        <name>Http Status</name>
+        <type>STRING</type>
+        <default>ready to connect</default>
+        <readonly>true</readonly>
       </property>
       <property>
         <name>Tcp Status</name>
