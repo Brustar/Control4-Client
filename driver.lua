@@ -258,6 +258,11 @@ function OnConnectionStatusChanged(idBinding, nPort, strStatus)
 		  hexdump(pack:hex())
 		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["IP Port"]), pack:hex())
 	   end
+    else
+	   --重连
+	   if (idBinding == SUB_SOCKET_BINDINGID) then
+		  connectEcloudServer()
+	   end
     end
 end
 
