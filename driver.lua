@@ -64,7 +64,7 @@ function OnPropertyChanged(sProperty)
 	local propertyValue = Properties[sProperty]
 	
 	if sProperty == "Http Status" and propertyValue == "upload success" then
-	   connectEcloudServer()
+	   connectEcloudServer(MAIN_SOCKET_BINDINGID)
 	end
 	
 	-- Remove any spaces (trim the property)
@@ -153,9 +153,9 @@ function EX_CMD.LUA_ACTION(tParams)
 	end
 end
 
-function connectEcloudServer()
-    C4:CreateNetworkConnection (MAIN_SOCKET_BINDINGID, Properties["IP Address"])
-    C4:NetConnect(MAIN_SOCKET_BINDINGID, tonumber(Properties["IP Port"]), "TCP")
+function connectEcloudServer(id)
+    C4:CreateNetworkConnection (id, Properties["IP Address"])
+    C4:NetConnect(id, tonumber(Properties["IP Port"]), "TCP")
 end
 
 function LUA_ACTION.Connect()
@@ -167,9 +167,6 @@ end
 
 function LUA_ACTION.Disconnect()
      Dbg:Debug("Disconnect " .. Properties["IP Address"])
-	
-	--[[ Create a network connection for the IP address in the property ]]--
-	C4:CreateNetworkConnection (MAIN_SOCKET_BINDINGID, Properties["IP Address"])
 	--[[ We are connecting to TCP port 2000 ]]--
 	C4:NetDisconnect(MAIN_SOCKET_BINDINGID, tonumber(Properties["IP Port"]), "TCP")
 end
@@ -261,7 +258,8 @@ function OnConnectionStatusChanged(idBinding, nPort, strStatus)
     else
 	   --重连
 	   if (idBinding == SUB_SOCKET_BINDINGID) then
-		  connectEcloudServer()
+		  C4:NetDisconnect(idBinding, tonumber(Properties["IP Port"]), "TCP")
+		  connectEcloudServer(idBinding)
 	   end
     end
 end
