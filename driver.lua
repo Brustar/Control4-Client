@@ -154,21 +154,21 @@ function EX_CMD.LUA_ACTION(tParams)
 end
 
 function connectEcloudServer(id)
-    C4:CreateNetworkConnection (id, Properties["IP Address"])
-    C4:NetConnect(id, tonumber(Properties["IP Port"]), "TCP")
+    C4:CreateNetworkConnection (id, Properties["TCP Address"])
+    C4:NetConnect(id, tonumber(Properties["TCP Port"]), "TCP")
 end
 
 function LUA_ACTION.Connect()
-     Dbg:Debug("connectting " .. Properties["IP Address"])
+     Dbg:Debug("connectting " .. Properties["TCP Address"])
 	
 	--[[ Create a network connection for the IP address in the property ]]--
-	--connectEcloudServer()
+	connectEcloudServer(MAIN_SOCKET_BINDINGID)
 end
 
 function LUA_ACTION.Disconnect()
-     Dbg:Debug("Disconnect " .. Properties["IP Address"])
+     Dbg:Debug("Disconnect " .. Properties["TCP Address"])
 	--[[ We are connecting to TCP port 2000 ]]--
-	C4:NetDisconnect(MAIN_SOCKET_BINDINGID, tonumber(Properties["IP Port"]), "TCP")
+	C4:NetDisconnect(MAIN_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), "TCP")
 end
 
 function LUA_ACTION.Upload()
@@ -197,7 +197,7 @@ end
 --[[ This callback function is ran when data is returned from the C4:SendToNetwork command ]]--
 function ReceivedFromNetwork(idBinding, nPort, strData)
 	--Dbg:Debug("")
-	--Dbg:Debug("Data Received = ".. strData)
+	Dbg:Debug("Data Received = ".. strData)
 	hexdump(strData, function(s) Dbg:Debug("<------ " .. s) end)
 	local pack = Pack.decode(strData)
 	if not (pack.head == 0xEC and pack.tail == 0xEA) then
@@ -208,10 +208,10 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	if pack.cmd == MASTER_AUTHOR then
 	   local ip = string.format("%d.%d.%d.%d",pack.state,pack.r,pack.g,pack.b)
 	   local port = pack.deviceID
-	   C4:NetDisconnect(MAIN_SOCKET_BINDINGID, tonumber(Properties["IP Port"]), "TCP")
+	   C4:NetDisconnect(MAIN_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), "TCP")
 	   
-	   C4:UpdateProperty("IP Address",ip)
-	   C4:UpdateProperty("IP Port",port)
+	   C4:UpdateProperty("TCP Address",ip)
+	   C4:UpdateProperty("TCP Port",port)
 	   C4:CreateNetworkConnection(SUB_SOCKET_BINDINGID, ip)
 	   C4:NetConnect(SUB_SOCKET_BINDINGID, port, "TCP")
 	end
@@ -223,13 +223,13 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	if pack.cmd == DEVICE_CONTROL then
 	   local data = device:handle()
 	   if data then
-		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["IP Port"]), data)
+		  --C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
 	   end
      end
 	
      if pack.cmd == CMD_QUERY then --获取设备状态  
 	   for i,v in ipairs(device:envData()) do
-		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["IP Port"]), v)
+		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), v)
 	   end
 	end
 	
@@ -247,18 +247,18 @@ function OnConnectionStatusChanged(idBinding, nPort, strStatus)
 	   if (idBinding == MAIN_SOCKET_BINDINGID) then
 		  local pack = Pack:create(MASTER_AUTHOR,tonumber(Properties["masterID"]))
 		  hexdump(pack:hex())
-		  C4:SendToNetwork(MAIN_SOCKET_BINDINGID, tonumber(Properties["IP Port"]), pack:hex())
+		  C4:SendToNetwork(MAIN_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), pack:hex())
 	   end
     
 	   if (idBinding == SUB_SOCKET_BINDINGID) then
 		  local pack = Pack:create(SUB_AUTHOR,tonumber(Properties["masterID"]))
 		  hexdump(pack:hex())
-		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["IP Port"]), pack:hex())
+		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), pack:hex())
 	   end
     else
 	   --重连
 	   if (idBinding == SUB_SOCKET_BINDINGID) then
-		  C4:NetDisconnect(idBinding, tonumber(Properties["IP Port"]), "TCP")
+		  C4:NetDisconnect(idBinding, tonumber(Properties["TCP Port"]), "TCP")
 		  connectEcloudServer(idBinding)
 	   end
     end

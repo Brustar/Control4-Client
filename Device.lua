@@ -5,6 +5,7 @@ Device = {}
 CMD_ON = 0x01
 CMD_OFF = 0x00
 CMD_STOP = 0x32
+CMD_TOGGLE = 0x33
 
 CMD_RAMP = 0x1A
 CMD_COLOR = 0x1B
@@ -87,6 +88,12 @@ function Device:create(data)
 	   elseif pack.deviceType == self.BLIND or pack.deviceType == self.BLIND + 1 then
 		  if pack.state == CMD_STOP then
 			 C4:SendToDevice(pack.deviceID,"STOP",{})
+		  elseif pack.state == CMD_ON then
+			 C4:SendToDevice(pack.deviceID,"UP",{})
+		  elseif pack.state == CMD_OFF then
+			 C4:SendToDevice(pack.deviceID,"DOWN",{})
+		  elseif pack.state == CMD_TOGGLE then
+			 C4:SendToDevice(pack.deviceID,"TOGGLE",{})
 		  end
 	   elseif pack.deviceType == self.DVD then
 		  if pack.state == CMD_SCAN_REV then
@@ -157,15 +164,18 @@ function Device:create(data)
 	   elseif pack.deviceType == self.PROJECTOR then
 	   elseif pack.deviceType == self.SCREEN then
 	   elseif pack.deviceType == self.CAMERA then
+		  
 	   elseif pack.deviceType == self.LOCK then
 	   elseif pack.deviceType == self.AMPLIFIER then
 	   else
 		  return nil
 	   end
-	   return pack
+	   return pack:hex()
     end
     
     function device:switch(pack)
+	   print("switch..."..pack.state)
+	   print("device..." .. pack.deviceID)
 	   if pack.state == CMD_ON then
 		  C4:SendToDevice(pack.deviceID,"ON",{})
 	   elseif pack.state == CMD_OFF then

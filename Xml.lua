@@ -15,11 +15,12 @@ function Xml:create(config)
 		  local str,roomid = string.match(self.config,pattern)
 		  local room = {}
 		  if t == "8" then
-			 room.id = id
-			 room.name = name
 			 if roomid == id then
 				room.devices=self:getDevices(str)
+				room.scenes = self:getScenes()
 			 end
+			 room.id = string.trim(string.format("%4X",tonumber(id)))
+			 room.name = name
 			 table.insert(rooms , room)
 		  end
 	   end
@@ -37,7 +38,7 @@ function Xml:create(config)
 
 	   for id,name in string.gmatch(state,"<id>(%d+)</id><name>(%w+)</name>") do
 		  local scene = {}
-		  scene.id = id
+		  scene.id = string.trim(string.format("%4X",tonumber(id)))
 		  scene.name = name
 		  table.insert(scenes , scene)
 	   end
@@ -51,7 +52,7 @@ function Xml:create(config)
 			 table.insert(self.nests,id)
 		  end
 		  local device = {}
-		  device.id = id
+		  device.id = string.trim(string.format("%4X",tonumber(id)))
 		  device.name = name
 		  device.type = f
 		  table.insert(devices , device)
@@ -63,9 +64,13 @@ function Xml:create(config)
     function xml:toJson()
 	   local obj = {}
 	   obj.rooms = self:getRooms()
-	   obj.scenes = self:getScenes()
+	   --obj.scenes = self:getScenes()
 	   return JSON:encode(obj)
     end
     
     return xml
+end
+
+function string.trim(s)
+  return (s:gsub("^%s*(.-)%s*$", "%1"))
 end

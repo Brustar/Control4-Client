@@ -9,14 +9,16 @@ function Http:create(data)
     local port = tonumber(Properties["HTTP Port"])
     
     function http:upload()
-	   local postData = string.format("opttype=1&hostid=%s&jsondata=%s",Properties["masterID"],self.data)
+	   local postData = string.format("optype=1&hostid=%s&jsondata=%s",Properties["masterID"],self.data)
 	   local url = string.format("http://%s:%d/cloud/host_config_upload.aspx",host,port)
+	   print("url:" .. url)
 	   local ticketId = C4:urlPost(url, postData)
 	   return ticketId
     end
     
     function http:IsSucceeded(responseData)
 	   local json = JSON:decode(responseData)
+	   print("return:" .. responseData)
 	   return json.errortype == "0"
     end
 
