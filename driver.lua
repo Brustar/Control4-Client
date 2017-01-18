@@ -63,10 +63,6 @@ function OnPropertyChanged(sProperty)
 
 	local propertyValue = Properties[sProperty]
 	
-	if sProperty == "Http Status" and propertyValue == "upload success" then
-	   connectEcloudServer(MAIN_SOCKET_BINDINGID)
-	end
-	
 	-- Remove any spaces (trim the property)
 	local trimmedProperty = string.gsub(sProperty, " ", "")
 
@@ -187,8 +183,11 @@ end
 function ReceivedAsync(ticketId, strData, responseCode, tHeaders)
     local this = gTicketIdMap[ticketId]
     if this then
-        this:ReceivedAsync(ticketId, strData, responseCode, tHeaders)
+        local success = this:ReceivedAsync(ticketId, strData, responseCode, tHeaders)
         gTicketIdMap[ticketId] = nil
+	   if success then
+		  connectEcloudServer(MAIN_SOCKET_BINDINGID)
+	   end
     else
         Dbg:Alert("ReceivedAsync: can not find command object!!")
     end

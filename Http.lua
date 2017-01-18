@@ -27,13 +27,14 @@ function Http:create(data)
 	   if (responseCode == 200) then
 		  if self:IsSucceeded(strData) then
 			 C4:UpdateProperty("Http Status","upload success")
+			 return true
 		  else
 			 C4:UpdateProperty("Http Status","upload fail")
 		  end
 	   else
 		  C4:UpdateProperty("Http Status","upload error")
 	   end
-	   
+	   return false
     end
     
     return http
