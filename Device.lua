@@ -43,7 +43,7 @@ function Device:create(data)
     device.AIRCONDITION = 0x31
     
     device.TV = 0x12
-    device.NETV = 0x14
+    device.NETV = 0x11
     device.DVD = 0x13
     device.FM = 0x15
     device.BGMUSIC = 0x14
@@ -174,7 +174,8 @@ function Device:create(data)
     end
     
     function device:switch(pack)
-	   print("switch..."..pack.state)
+	   print("state:" .. pack.state)
+	   print("type...".. pack.deviceType)
 	   print("device..." .. pack.deviceID)
 	   if pack.state == CMD_ON then
 		  C4:SendToDevice(pack.deviceID,"ON",{})
