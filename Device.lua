@@ -144,6 +144,7 @@ function Device:create(data)
 		  end
 	   elseif pack.deviceType == self.NETV then
 	   elseif pack.deviceType == self.FM then
+	   
 	   elseif pack.deviceType == self.BGMUSIC then
 		  --此驱动必须和my music在同一房间
 		  if pack.state == CMD_PLAY then

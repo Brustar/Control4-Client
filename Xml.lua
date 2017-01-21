@@ -47,8 +47,9 @@ function Xml:create(config)
     
     function xml:getDevices(str)
 	   local devices={}
-	   for id,name,f in string.gmatch(str,"<id>(%d+)</id>\n<name>(.+)</name>\n<type>7</type>\n<itemdata><config_data_file>(%w+)") do
+	   for id,name,f in string.gmatch(str,"<id>(%d+)</id>\n<name>([%w ]+)</name>\n<type>7</type>\n<itemdata><config_data_file>([_%w]+)") do
 		  if f == "thermostatV2" then
+			 print("insert.....")
 			 table.insert(self.nests,id)
 		  end
 		  local device = {}
