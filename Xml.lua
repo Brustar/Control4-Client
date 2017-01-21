@@ -10,7 +10,7 @@ function Xml:create(config)
     function xml:getRooms()
 	   local rooms={}
 	   
-	   for id,name,t in string.gmatch(self.config,"<id>(%d+)</id>\n<name>([\31-\243]+)</name>\n<type>(%d+)</type>") do
+	   for id,name,t in string.gmatch(self.config,"<id>(%d+)</id>\n<name>(.+)</name>\n<type>(%d+)</type>") do
 		  local pattern="(<id>(%d+)</id>\n<name>%w+</name>\n<type>8</type>[%s%S]*<type>7</type>)"
 		  local str,roomid = string.match(self.config,pattern)
 		  local room = {}
@@ -36,7 +36,7 @@ function Xml:create(config)
 	   local state = string.match(str,pattern)
 	   state = state:gsub("&lt;","<"):gsub("&gt;",">")
 	   --[\31-\243]+ 包括中英文，数字，空格，下划线
-	   for id,name in string.gmatch(state,"<id>(%d+)</id><name>([\31-\243]+)</name>") do
+	   for id,name in string.gmatch(state,"<id>(%d+)</id><name>(.+)</name>") do
 		  local scene = {}
 		  scene.id = string.trim(string.format("%4X",tonumber(id)))
 		  scene.name = name
@@ -47,7 +47,7 @@ function Xml:create(config)
     
     function xml:getDevices(str)
 	   local devices={}
-	   for id,name,f in string.gmatch(str,"<id>(%d+)</id>\n<name>([\31-\243]+)</name>\n<type>7</type>\n<itemdata><config_data_file>([_%w]+)") do
+	   for id,name,f in string.gmatch(str,"<id>(%d+)</id>\n<name>(.+)</name>\n<type>7</type>\n<itemdata><config_data_file>([_%w]+)") do
 		  if f == "thermostatV2" then
 			 print("insert.....")
 			 table.insert(self.nests,id)
