@@ -32,21 +32,38 @@ function Xml:create(config)
 	   local scenes={}
 	   
 	   local str = C4:GetProjectItems("AGENTS","NO_ROOT_TAGS")
-	   local pattern = "<name>Macros</name>\n<type>9</type>\n<itemdata><large_image>[^\n]+</large_image><small_image>[^\n]+</small_image></itemdata>\n<state>([^\n]+)</state>"
+	   
+	   local pattern = "<name>Advanced Lighting</name>\n<type>9</type>\n<itemdata><large_image>[^\n]+</large_image><small_image>[^\n]+</small_image></itemdata>\n<state>([^\n]+)</state>"
 	   local state = string.match(str,pattern)
 	   state = state:gsub("&lt;","<"):gsub("&gt;",">")
-	   for id,name in string.gmatch(state,"<id>(%d+)</id><name>(.-)</name>") do
+	   local i = 1
+	   for name,id in string.gmatch(state,"<AdvScene>%s*<name>(.-)</name>[%d%D]-<scene_id>(%d+)</scene_id>") do
 		  local scene = {}
 		  scene.id = string.trim(string.format("%4X",tonumber(id)))
 		  scene.name = name
 		  table.insert(scenes , scene)
+		  i = i + 1
 	   end
+	   
+	   pattern = "<name>Macros</name>\n<type>9</type>\n<itemdata><large_image>[^\n]+</large_image><small_image>[^\n]+</small_image></itemdata>\n<state>([^\n]+)</state>"
+	   state = string.match(str,pattern)
+	   state = state:gsub("&lt;","<"):gsub("&gt;",">")
+	   for id,name in string.gmatch(state,"<id>(%d+)</id><name>(.-)</name>") do
+		  local scene = {}
+		  scene.id = string.trim(string.format("%4X",i+tonumber(id)))
+		  scene.name = name
+		  table.insert(scenes , scene)
+		  i=i+1
+	   end
+	   
+	   
+	   
 	   return scenes
     end
     
     function xml:getDevices(str)
 	   local devices={}
-	   for id,name,f in string.gmatch(str,"<id>(%d+)</id>\n<name>(.-)</name>\n<type>7</type>\n<itemdata><config_data_file>([_%w]+)") do
+	   for id,name,f in string.gmatch(str,"<id>(%d+)</id>\n<name>([\31-\243]-)</name>\n<type>7</type>\n<itemdata><config_data_file>([_%w]+)") do
 		  if f == "thermostatV2" then
 			 table.insert(self.nests,id)
 		  end

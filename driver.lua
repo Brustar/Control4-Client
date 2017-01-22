@@ -174,10 +174,11 @@ function LUA_ACTION.Upload()
 	local xml = Xml:create(proj)
      local data = xml:toJson()
      Dbg:Debug(data)
-	
+
 	local http = Http:create(data)
 	local ticketId = http:upload()
 	table.insert(gTicketIdMap, ticketId, http)
+
 end
 
 function ReceivedAsync(ticketId, strData, responseCode, tHeaders)

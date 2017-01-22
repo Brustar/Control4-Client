@@ -11,7 +11,6 @@ function Http:create(data)
     function http:upload()
 	   local postData = string.format("optype=1&hostid=%s&jsondata=%s",Properties["masterID"],self.data)
 	   local url = string.format("http://%s:%d/cloud/host_config_upload.aspx",host,port)
-	   print("url:" .. url)
 	   local ticketId = C4:urlPost(url, postData)
 	   return ticketId
     end
