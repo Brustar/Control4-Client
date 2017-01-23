@@ -196,8 +196,6 @@ end
 
 --[[ This callback function is ran when data is returned from the C4:SendToNetwork command ]]--
 function ReceivedFromNetwork(idBinding, nPort, strData)
-	--Dbg:Debug("")
-	Dbg:Debug("Data Received = ".. strData)
 	hexdump(strData, function(s) Dbg:Debug("<------ " .. s) end)
 	local pack = Pack.decode(strData)
 	if not (pack.head == 0xEC and pack.tail == 0xEA) then
