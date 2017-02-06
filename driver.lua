@@ -165,6 +165,7 @@ function LUA_ACTION.Disconnect()
      Dbg:Debug("Disconnect " .. Properties["TCP Address"])
 	--[[ We are connecting to TCP port 2000 ]]--
 	C4:NetDisconnect(MAIN_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), "TCP")
+	C4:UpdateProperty("Tcp Status", "tcp disconnected")
 end
 
 function LUA_ACTION.Upload()
