@@ -33,6 +33,10 @@ CMD_ENTER = 0x09
 CMD_MUTE_TOGGLE = 0x04
 CMD_SET_VOLUME_LEVEL = 0xAA
 
+VAR_TEMPERATURE_C = 1031
+VAR_HUMIDITY = 1038
+VAR_LEVEL_OPEN = 1000
+
 function Device:create(data)
 
     device={}
@@ -193,11 +197,11 @@ function Device:create(data)
 		  for _,id in ipairs(ids) do
 			 idDevice = tonumber(id)
 			 --湿度
-			 pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),STATE_HUMIDITY,tonumber(C4:GetVariable(idDevice, 1138)))
+			 pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),STATE_HUMIDITY,tonumber(C4:GetVariable(idDevice, VAR_HUMIDITY)))
 			 data = pack:hex()
 			 table:insert(ret,data)
 			 --温度
-			 pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),STATE_TEMPRETURE,tonumber(C4:GetVariable(idDevice, 1131)))
+			 pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),STATE_TEMPRETURE,tonumber(C4:GetVariable(idDevice, VAR_TEMPERATURE_C)))
 			 local data = pack:hex()
 			 table:insert(ret,data)
 		  end
@@ -209,6 +213,11 @@ function Device:create(data)
 	   end
 	   
 	   return ret
+    end
+    
+    function device:deviceState(deviceID)
+	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),STATE,tonumber(C4:GetVariable(deviceID, VAR_LEVEL_OPEN)))
+	   return pack:hex()
     end
     
     function device:airDeviceVariableID(deviceID,key)

@@ -236,6 +236,11 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	   C4:SetVariable("SCENE_ID", tostring(pack.deviceID))
 	   C4:FireEvent("tcp event")
 	end
+	
+	if pack.cmd == CMD_UPLOAD then
+	   local data = device:deviceState(tostring(pack.deviceID))
+	   C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
+	end
 end
 
 function OnConnectionStatusChanged(idBinding, nPort, strStatus)

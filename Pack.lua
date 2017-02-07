@@ -9,6 +9,7 @@ CMD_SCENE = 0x89
 
 STATE_TEMPRETURE = 0x6A
 STATE_HUMIDITY = 0x8A
+STATE = 0x01
 
 function Pack:create(cmd,masterID,state,r,g,b,deviceID,deviceType)
     --print("cmd:"..cmd)
