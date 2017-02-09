@@ -226,8 +226,9 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	   end
      end
 	
-     if pack.cmd == CMD_QUERY then --获取设备状态  
-	   for i,v in ipairs(device:envData()) do
+	print("cmd:"..pack.cmd)
+     if pack.cmd == CMD_QUERY then --获取环境设备数据 
+	   for _,v in ipairs(device:envData()) do
 		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), v)
 	   end
 	end

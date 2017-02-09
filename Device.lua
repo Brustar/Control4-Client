@@ -192,7 +192,7 @@ function Device:create(data)
     function device:envData()
 	   local ret = {},idDevice,pack
 	   
-	   if Properties["Nest"] then
+	   if Properties["Nest ID"] then
 		  local ids = string.split(Properties["Nest ID"])
 		  for _,id in ipairs(ids) do
 			 idDevice = tonumber(id)
