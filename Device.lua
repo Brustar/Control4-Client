@@ -197,11 +197,11 @@ function Device:create(data)
 		  for _,id in ipairs(ids) do
 			 idDevice = tonumber(id)
 			 --湿度
-			 pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),STATE_HUMIDITY,tonumber(C4:GetVariable(idDevice, VAR_HUMIDITY)))
+			 pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),STATE_HUMIDITY,tonumber(C4:GetVariable(idDevice, VAR_HUMIDITY)),0,0,idDevice)
 			 data = pack:hex()
 			 table.insert(ret,data)
 			 --温度
-			 pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),STATE_TEMPRETURE,tonumber(C4:GetVariable(idDevice, VAR_TEMPERATURE_C)))
+			 pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),STATE_TEMPRETURE,tonumber(C4:GetVariable(idDevice, VAR_TEMPERATURE_C)),0,0,idDevice)
 			 local data = pack:hex()
 			 table.insert(ret,data)
 		  end
