@@ -229,6 +229,7 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	print("cmd:"..pack.cmd)
      if pack.cmd == CMD_QUERY then --获取环境设备数据 
 	   for _,v in ipairs(device:envData()) do
+		  hexdump(v, function(s) Dbg:Debug("------>" .. s) end)
 		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), v)
 	   end
 	end

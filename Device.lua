@@ -33,8 +33,8 @@ CMD_ENTER = 0x09
 CMD_MUTE_TOGGLE = 0x04
 CMD_SET_VOLUME_LEVEL = 0xAA
 
-VAR_TEMPERATURE_C = 1031
-VAR_HUMIDITY = 1038
+VAR_TEMPERATURE_C = 1131
+VAR_HUMIDITY = 1138
 VAR_LEVEL_OPEN = 1000
 
 function Device:create(data)
@@ -199,17 +199,17 @@ function Device:create(data)
 			 --湿度
 			 pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),STATE_HUMIDITY,tonumber(C4:GetVariable(idDevice, VAR_HUMIDITY)))
 			 data = pack:hex()
-			 table:insert(ret,data)
+			 table.insert(ret,data)
 			 --温度
 			 pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),STATE_TEMPRETURE,tonumber(C4:GetVariable(idDevice, VAR_TEMPERATURE_C)))
 			 local data = pack:hex()
-			 table:insert(ret,data)
+			 table.insert(ret,data)
 		  end
 	   else
 		  idDevice = tonumber(Properties["Aircondition ID"])
 		  pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),STATE_TEMPRETURE,tonumber(C4:GetVariable(idDevice, self:airDeviceVariableID(idDevice,"CURRENT_TEMPRETURE"))))
 		  local data = pack:hex()
-		  table:insert(ret,data)
+		  table.insert(ret,data)
 	   end
 	   
 	   return ret
@@ -237,8 +237,11 @@ function Device:create(data)
 end
 
 function string.split(str, delimiter)
-    if (delimiter=='') then return false end
     local pos,arr = 0, {}
+    if (not delimiter) then 
+	   table.insert(arr,str)
+	   return arr 
+    end
     -- for each divider found
     for st,sp in function() return string.find(str, delimiter, pos, true) end do
         table.insert(arr, string.sub(str, pos, st - 1))
