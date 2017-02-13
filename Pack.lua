@@ -4,12 +4,11 @@ MASTER_AUTHOR = 0x22
 SUB_AUTHOR = 0x23
 DEVICE_CONTROL = 0x03
 CMD_UPLOAD = 0x01
-CMD_QUERY = 0x8A
 CMD_SCENE = 0x89
 
-STATE_TEMPRETURE = 0x6A
-STATE_HUMIDITY = 0x8A
-STATE = 0x01
+CMD_TEMPRETURE = 0x6A
+CMD_HUMIDITY = 0x8A
+CMD_OPEN = 0x7D
 
 function Pack:create(cmd,masterID,state,r,g,b,deviceID,deviceType)
     --print("cmd:"..cmd)

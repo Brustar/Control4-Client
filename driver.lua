@@ -226,8 +226,7 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	   end
      end
 	
-	print("cmd:"..pack.cmd)
-     if pack.cmd == CMD_QUERY then --获取环境设备数据 
+     if pack.cmd == CMD_HUMIDITY or pack.cmd == CMD_TEMPRETURE then --获取环境设备数据 
 	   for _,v in ipairs(device:envData()) do
 		  hexdump(v, function(s) Dbg:Debug("------>" .. s) end)
 		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), v)
@@ -238,9 +237,10 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	   C4:SetVariable("SCENE_ID", tostring(pack.deviceID))
 	   C4:FireEvent("tcp event")
 	end
-	
-	if pack.cmd == CMD_UPLOAD then
+	print("cmd:"..pack.cmd)
+	if pack.cmd == CMD_OPEN then
 	   local data = device:deviceState(tostring(pack.deviceID))
+	   hexdump(data, function(s) Dbg:Debug("------>" .. s) end)
 	   C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
 	end
 end
