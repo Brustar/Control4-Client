@@ -2,6 +2,9 @@ require "Pack"
 require "Xml"
 require "Http"
 require "Device"
+require "Server"
+require "Udp"
+
 --=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 -- Driver Declarations
 --=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -156,9 +159,10 @@ end
 
 function LUA_ACTION.Connect()
      Dbg:Debug("connectting " .. Properties["TCP Address"])
-	
+	tcpServer()
 	--[[ Create a network connection for the IP address in the property ]]--
 	connectEcloudServer(MAIN_SOCKET_BINDINGID)
+	Udp:create().connect()
 end
 
 function LUA_ACTION.Disconnect()
@@ -260,6 +264,10 @@ function OnConnectionStatusChanged(idBinding, nPort, strStatus)
 		  local pack = Pack:create(SUB_AUTHOR,tonumber(Properties["masterID"]))
 		  hexdump(pack:hex())
 		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), pack:hex())
+	   end
+	   
+	   if (nPort == UDP_PORT) then
+		  Udp:create().OnConnectionStatusChanged(idBinding, nPort, strStatus)
 	   end
     else
 	   --重连

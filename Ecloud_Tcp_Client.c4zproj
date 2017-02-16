@@ -2,12 +2,14 @@
  <Items>
   <Item type="dir" c4zDir="icons" name="icons" recurse="true" exclude="false" />
   <Item type="dir" c4zDir="www" name="www" recurse="true" exclude="false" />
+  <Item type="file" name="Device.lua" />
   <Item type="file" name="documentation.rtf" />
   <Item type="file" name="driver.lua" />
   <Item type="file" name="driver.xml" />
   <Item type="file" name="Http.lua" />
   <Item type="file" name="Pack.lua" />
-  <Item type="file" name="Device.lua" />
+  <Item type="file" name="Server.lua" />
+  <Item type="file" name="Udp.lua" />
   <Item type="file" name="Xml.lua" />
  </Items>
 </Driver>
