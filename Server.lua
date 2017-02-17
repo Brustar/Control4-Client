@@ -23,14 +23,6 @@ local server = {
                     client:Write(message)
              end
       end,
-      haveName = function(self, name)
-             for _,info in pairs(self.clients) do
-                    if (info.name ~= nil and string.lower(info.name) == string.lower(name)) then
-                          return true
-                    end
-             end
-             return false
-      end,
       stripControlCharacters = function(self, data)
              local ret = ""
              for i in string.gmatch(data, "%C+") do
@@ -50,7 +42,7 @@ local server = {
                     self.clients = {}
                     self.clientsCnt = 0
                     for cli,info in pairs(clients) do
-                          print("Disconnecting " .. cli:GetRemoteAddress().ip .. ":" .. cli:GetRemoteAddress().port .. ": name: " .. tostring(info.name))
+                          print("Disconnecting " .. cli:GetRemoteAddress().ip .. ":" .. cli:GetRemoteAddress().port)
                           cli:Write(""):Close(true)
                     end
              end
@@ -169,9 +161,6 @@ local server = {
                                                              print("Server " .. tostring(srv) .. " Client " .. tostring(client) .. " Disconnected gracefully.")
                                                       else
                                                              print("Server " .. tostring(srv) .. " Client " .. tostring(client) .. " Disconnected with error " .. errCode .. " (" .. errMsg .. ")")
-                                                      end
-                                                      if (info.name ~= nil) then
-                                                             self:notifyOthers(cli, info.name .. " disconnected!\r\n")
                                                       end
                                                       self.clients[cli] = nil
                                                       self.clientsCnt = self.clientsCnt - 1
