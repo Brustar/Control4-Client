@@ -118,7 +118,7 @@ local server = {
 											 end
 										  elseif pack.cmd == CMD_HUMIDITY or pack.cmd == CMD_TEMPRETURE then --获取环境设备数据 
 											 for _,v in ipairs(device:envData()) do
-												hexdump(v, function(s) Dbg:Debug("server:------>" .. s) end)
+												hexdump(v, function(s) print("server:------>" .. s) end)
 												self:broadcast(cli , v)
 												cli:ReadUntil(string.char(0xEA))
 											 end
@@ -129,7 +129,7 @@ local server = {
 											 cli:ReadUntil(string.char(0xEA))
 										  elseif pack.cmd == CMD_OPEN then
 											 local data = device:deviceState(tostring(pack.deviceID))
-											 hexdump(data, function(s) Dbg:Debug("server:------>" .. s) end)
+											 hexdump(data, function(s) print("server:------>" .. s) end)
 											 self:broadcast(cli , data)
 											 cli:ReadUntil(string.char(0xEA))
 										  elseif pack.cmd == MASTER_AUTH then
