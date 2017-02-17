@@ -46,6 +46,8 @@ DEFAULT_PROXY_BINDINGID = 5001
 MAIN_SOCKET_BINDINGID = 6001
 SUB_SOCKET_BINDINGID = 6002
 
+SERVER = nil
+
 --=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 -- Common Driver Code
 --=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -159,7 +161,7 @@ end
 
 function LUA_ACTION.Connect()
      Dbg:Debug("connectting " .. Properties["TCP Address"])
-	tcpServer()
+	SERVER = tcpServer()
 	--[[ Create a network connection for the IP address in the property ]]--
 	connectEcloudServer(MAIN_SOCKET_BINDINGID)
 	Udp:create().connect()
@@ -168,8 +170,10 @@ end
 function LUA_ACTION.Disconnect()
      Dbg:Debug("Disconnect " .. Properties["TCP Address"])
 	--[[ We are connecting to TCP port 2000 ]]--
+	SERVER:stop()
 	C4:NetDisconnect(MAIN_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), "TCP")
 	C4:UpdateProperty("Tcp Status", "tcp disconnected")
+	Udp:create().stop()
 end
 
 function LUA_ACTION.Upload()
@@ -201,12 +205,17 @@ end
 
 --[[ This callback function is ran when data is returned from the C4:SendToNetwork command ]]--
 function ReceivedFromNetwork(idBinding, nPort, strData)
+    if (idBinding == UDP_CONNECT_ID) then
+	   return
+    end
+
 	hexdump(strData, function(s) Dbg:Debug("<------ " .. s) end)
 	local pack = Pack.decode(strData)
 	if not (pack.head == 0xEC and pack.tail == 0xEA) then
 	   C4:UpdateProperty("Tcp Status", "tcp error")
 	   return
 	end
+	
 	local device = Device:create(pack)
 	if pack.cmd == MASTER_AUTHOR then
 	   local ip = string.format("%d.%d.%d.%d",pack.state,pack.r,pack.g,pack.b)
@@ -241,7 +250,7 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	   C4:SetVariable("SCENE_ID", tostring(pack.deviceID))
 	   C4:FireEvent("tcp event")
 	end
-	print("cmd:"..pack.cmd)
+	print("cmd:"..pack.cmd.."bindid:" .. idBinding)
 	if pack.cmd == CMD_OPEN then
 	   local data = device:deviceState(tostring(pack.deviceID))
 	   hexdump(data, function(s) Dbg:Debug("------>" .. s) end)

@@ -24,5 +24,9 @@ function Udp:create()
 	   end
     end
     
+    function udp.stop()
+	   C4:NetDisconnect(UDP_CONNECT_ID, UDP_PORT, 'UDP')
+    end
+    
     return udp
 end

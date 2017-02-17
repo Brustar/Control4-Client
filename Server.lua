@@ -1,4 +1,8 @@
+require "Pack"
+require "Device"
+
 SERVER_PORT = 8009
+MASTER_AUTH = 0x84
 
 local server = {
       clients = {},
@@ -6,17 +10,17 @@ local server = {
       --socket = nil,
       notifyOthers = function(self, client, message)
              for cli,info in pairs(self.clients) do
-                    if (cli ~= client and info.name ~= nil) then
-                          cli:Write(message .. "\r\n")
+                    if (cli ~= client) then
+                          cli:Write(message)
                     end
              end
       end,
       broadcast = function(self, client, message)
              local info = self.clients[client]
              print("broadcast for client " .. tostring(client) .. " info: " ..tostring(info))
-             if (info ~= nil and info.name ~= nil) then
-                    self:notifyOthers(client, info.name .. " wrote: " .. message .. "\r\n")
-                    client:Write("You wrote: " .. message .. "\r\n")
+             if (info ~= nil) then
+                    self:notifyOthers(client, message)
+                    client:Write(message)
              end
       end,
       haveName = function(self, name)
@@ -47,7 +51,7 @@ local server = {
                     self.clientsCnt = 0
                     for cli,info in pairs(clients) do
                           print("Disconnecting " .. cli:GetRemoteAddress().ip .. ":" .. cli:GetRemoteAddress().port .. ": name: " .. tostring(info.name))
-                          cli:Write("Server is shutting down!\r\n"):Close(true)
+                          cli:Write(""):Close(true)
                     end
              end
       end,
@@ -98,42 +102,55 @@ local server = {
                                  -- srv is the instance C4:CreateTCPServer() returned
                                  -- client is a C4LuaTcpClient instance of the new connection that was just accepted
                                  print("Connection on server " .. tostring(srv) .. " accepted, client: " .. tostring(client))
+						   client:ReadUntil(string.char(0xEA))
                                  if (self.clientsCnt >= maxClients) then
-                                        client:Write("Sorry, I only allow " .. maxClients .. " concurrent connections!\r\n"):Close(true)
+                                        --client:Write("Sorry, I only allow " .. maxClients .. " concurrent connections!\r\n"):Close(true)
                                         return
                                   end
                                  local info = {}
-                                 self.clients[client] = info
-                                 self.clientsCnt = self.clientsCnt + 1
                                  client:OnRead(
-                                              function(cli, data)
-                                                      -- cli is the C4LuaTcpClient instance (same as client in the OnAccept handler) that the data was read on
-                                                      if (string.sub(data, -2) == "\r\n") then
-                                                             -- Need to check if the delimiter exists.  It may not if the client sent data without one and then disconnected!
-                                                             data = string.sub(data, 1, -3) -- Cut off \r\n
-                                                      end
-                                                      data = self:stripControlCharacters(data)
-                                                      if (info.name == nil) then
-                                                             if (#data > 0) then
-                                                                    if (self:haveName(data)) then
-                                                                          cli:Write("Choose a different name, please:\r\n")
-                                                                    else
-                                                                          info.name = data
-                                                                          self:notifyOthers(cli, info.name .. " joined!\r\n")
-                                                                          cli:Write("Thank you, " .. info.name .. "! Type 'quit' to disconnect.\r\n")
-                                                                    end
-                                                             else
-                                                                    cli:Write("Please enter your name:\r\n")
-                                                             end
-                                                             cli:ReadUntil("\r\n")
-                                                      elseif (data == "quit") then
-                                                             cli:Write("Goodbye, " .. info.name .. "!\r\n"):Close(true)
-                                                      else
-                                                             if (#data > 0) then
-                                                                    self:broadcast(cli, data)
-                                                             end
-                                                             cli:ReadUntil("\r\n")
-                                                      end
+                                              function(cli, strData)
+										  hexdump(strData, function(s) print("server:<------ " .. s) end)
+										  local pack = Pack.decode(strData)
+										  local device = Device:create(pack)
+										  if not (pack.head == 0xEC and pack.tail == 0xEA and pack.masterID == tonumber(Properties["masterID"])) then
+											 cli:ReadUntil(string.char(0xEA))
+											 return
+										  end
+										  
+										  if pack.cmd == DEVICE_CONTROL then
+											 local data = device:handle()
+											 if data then
+												self:broadcast(cli , data)
+												cli:ReadUntil(string.char(0xEA))
+											 end
+										  elseif pack.cmd == CMD_HUMIDITY or pack.cmd == CMD_TEMPRETURE then --获取环境设备数据 
+											 for _,v in ipairs(device:envData()) do
+												hexdump(v, function(s) Dbg:Debug("server:------>" .. s) end)
+												self:broadcast(cli , v)
+												cli:ReadUntil(string.char(0xEA))
+											 end
+										  elseif pack.cmd == CMD_SCENE then
+											 C4:SetVariable("SCENE_ID", tostring(pack.deviceID))
+											 C4:FireEvent("tcp event")
+											 self:broadcast(cli , pack:hex())
+											 cli:ReadUntil(string.char(0xEA))
+										  elseif pack.cmd == CMD_OPEN then
+											 local data = device:deviceState(tostring(pack.deviceID))
+											 hexdump(data, function(s) Dbg:Debug("server:------>" .. s) end)
+											 self:broadcast(cli , data)
+											 cli:ReadUntil(string.char(0xEA))
+										  elseif pack.cmd == MASTER_AUTH then
+											 if pack.masterID == tonumber(Properties["masterID"]) then
+												self.clients[client] = info
+												self.clientsCnt = self.clientsCnt + 1
+												client:Write(Pack:create(pack.cmd,pack.masterID,0x41):hex())
+											 else
+												client:Write(Pack:create(pack.cmd,pack.masterID,0x40):hex())
+											 end
+											 cli:ReadUntil(string.char(0xEA))
+										  end
+										  
                                                end
                                         )
                                         :OnWrite(
@@ -169,7 +186,7 @@ local server = {
                                                       print("Server " .. tostring(srv) .. " Client " .. tostring(client) .. " Error " .. code .. " (" .. msg .. ") on " .. op)
                                                end
                                         )
-                                        :Write("Welcome! Please enter your name:\r\n")
+                                        :Write("")
                                         :ReadUntil("\r\n")
                           end
                     )
@@ -184,14 +201,10 @@ local server = {
 function tcpServer()
     server:start(10, "*", SERVER_PORT, function(success, info)
 		if (success) then
-			  local minutes = 10
-			  print("Server listening on " .. info.ip .. ":" .. info.port .. ". Will stop in " .. minutes .. " minutes!")
-			  C4:SetTimer(minutes * 60 * 1000, function()
-				    print("Stopping server and disconnecting clients now.")
-				    server:stop()
-			  end)
+			  print("Server listening on " .. info.ip .. ":" .. info.port)
 		else
 			  print("Could not start server: " .. info)
 		end
     end)
+    return server
 end
