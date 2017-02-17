@@ -6,9 +6,8 @@ DEVICE_CONTROL = 0x03
 CMD_UPLOAD = 0x01
 CMD_SCENE = 0x89
 
-CMD_TEMPRETURE = 0x6A
 CMD_HUMIDITY = 0x8A
-CMD_OPEN = 0x7D
+CMD_OPEN = 0x9A
 
 function Pack:create(cmd,masterID,state,r,g,b,deviceID,deviceType)
     --print("cmd:"..cmd)
