@@ -119,6 +119,12 @@
         <default>ready to connect</default>
         <readonly>true</readonly>
       </property>
+      <property>
+        <name>Server Status</name>
+        <type>STRING</type>
+        <default>ready to connect</default>
+        <readonly>true</readonly>
+      </property>
     </properties>
     <documentation file="documentation.rtf" />
   </config>

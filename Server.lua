@@ -71,6 +71,7 @@ local server = {
                            function(srv, endpoint)
                                  -- Handling this callback is optional.  It merely lets you know that the server is now actually listening.
                                  local addr = srv:GetLocalAddress()
+						   C4:UpdateProperty("Server Status", "Server listen success")
                                  print("Server " .. tostring(srv) .. " chose endpoint " .. endpoint.ip .. ":" .. endpoint.port .. ", listening on " .. addr.ip .. ":" .. addr.port)
                                  if (not calledDone) then
                                         calledDone = true
@@ -83,6 +84,7 @@ local server = {
                                  -- code is the system error code (as a number)
                                  -- msg is the error message as a string
                                  print("Server " .. tostring(srv) .. " Error " .. code .. " (" .. msg .. ")")
+						   C4:UpdateProperty("Server Status", "Server error")
                                  if (not calledDone) then
                                         calledDone = true
                                         done(false, msg)
@@ -93,10 +95,11 @@ local server = {
                           function(srv, client)
                                  -- srv is the instance C4:CreateTCPServer() returned
                                  -- client is a C4LuaTcpClient instance of the new connection that was just accepted
-                                 print("Connection on server " .. tostring(srv) .. " accepted, client: " .. tostring(client))
+                                 C4:UpdateProperty("Server Status", "A client accept success")
+						   print("Connection on server " .. tostring(srv) .. " accepted, client: " .. tostring(client))
 						   client:ReadUntil(string.char(0xEA))
                                  if (self.clientsCnt >= maxClients) then
-                                        --client:Write("Sorry, I only allow " .. maxClients .. " concurrent connections!\r\n"):Close(true)
+                                        client:Write(""):Close(true)
                                         return
                                   end
                                  local info = {}
@@ -110,13 +113,13 @@ local server = {
 											 return
 										  end
 										  
-										  if pack.cmd == DEVICE_CONTROL then
+										  if pack.cmd == DEVICE_LOCAL_CONTROL then
 											 local data = device:handle()
 											 if data then
 												self:broadcast(cli , data)
 												cli:ReadUntil(string.char(0xEA))
 											 end
-										  elseif pack.cmd == CMD_HUMIDITY or pack.cmd == CMD_TEMPRETURE then --获取环境设备数据 
+										  elseif pack.cmd == CMD_HUMIDITY then --获取环境设备数据 
 											 for _,v in ipairs(device:envData()) do
 												hexdump(v, function(s) print("server:------>" .. s) end)
 												self:broadcast(cli , v)
