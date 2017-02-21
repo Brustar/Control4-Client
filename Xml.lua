@@ -10,19 +10,27 @@ function Xml:create(config)
     function xml:getRooms()
 	   local rooms={}
 	   
-	   for id,name,t in string.gmatch(self.config,"<id>(%d+)</id>\n<name>(.-)</name>\n<type>(%d+)</type>") do
-		  local pattern="(<id>(%d+)</id>\n<name>%w+</name>\n<type>8</type>[%s%S]*<type>7</type>)"
-		  local str,roomid = string.match(self.config,pattern)
-		  local room = {}
-		  if t == "8" then
-			 if roomid == id then
-				room.devices=self:getDevices(str)
-				room.scenes = self:getScenes()
-			 end
-			 room.id = string.trim(string.format("%4X",tonumber(id)))
-			 room.name = name
-			 table.insert(rooms , room)
+	   for id,name in string.gmatch(self.config,"<id>(%d+)</id>\n?<name>([^<^>]-)</name>\n?<type>8</type>") do
+		  local tVers = C4:GetVersionInfo()
+		  local strVers = tVers["version"]
+		  local major, minor, _, _ = string.match(strVers, "(%d+)\.(%d+)\.(%d+)\.(%d+)")
+		  
+		  local pattern="(<id>(%d+)</id>\n?<name>[^<^>]-</name>\n?<type>8</type>.*<type>7</type>)"
+		  if major == 2 and minor>8 then
+			 pattern = "(<id>(%d+)</id><name>[^<^>]-</name>\n?<type>8</type>[%s%S]-)</c4i></item></subitems></item></subitems></item>"
 		  end
+		  local room = {}
+		  for str,roomid in string.gmatch(self.config,pattern) do
+			 if str and roomid == id then
+				room.devices=self:getDevices(str)
+				if major == 2 and minor < 9 then
+				    room.scenes = self:getScenes()
+				end
+			 end
+		  end
+		  room.id = string.trim(string.format("%4X",tonumber(id)))
+		  room.name = name
+		  table.insert(rooms , room)
 	   end
 	   C4:UpdateProperty("Nest ID", table.concat(self.nests,","))	-- 多个Nest
 	   return rooms
@@ -33,7 +41,7 @@ function Xml:create(config)
 	   
 	   local str = C4:GetProjectItems("AGENTS","NO_ROOT_TAGS")
 	   
-	   local pattern = "<name>Advanced Lighting</name>\n<type>9</type>\n<itemdata><large_image>[^\n]+</large_image><small_image>[^\n]+</small_image></itemdata>\n<state>([^\n]+)</state>"
+	   local pattern = "<name>Advanced Lighting</name>\n?<type>9</type>\n?<itemdata><large_image>[^\n]+</large_image><small_image>[^\n]+</small_image></itemdata>\n?<state>([^\n]+)</state>"
 	   local state = string.match(str,pattern)
 	   state = state:gsub("&lt;","<"):gsub("&gt;",">")
 	   local i = 1
@@ -45,7 +53,7 @@ function Xml:create(config)
 		  i = i + 1
 	   end
 
-	   pattern = "<name>Macros</name>\n<type>9</type>\n<itemdata><large_image>[^\n]+</large_image><small_image>[^\n]+</small_image></itemdata>\n<state>([^\n]+)</state>"
+	   pattern = "<name>Macros</name>\n?<type>9</type>\n?<itemdata><large_image>[^\n]+</large_image><small_image>[^\n]+</small_image></itemdata>\n?<state>([^\n]+)</state>"
 	   state = string.match(str,pattern)
 	   state = state:gsub("&lt;","<"):gsub("&gt;",">")
 	   for id,name in string.gmatch(state,"<id>(%d+)</id><name>(.-)</name>") do
@@ -62,7 +70,7 @@ function Xml:create(config)
     
     function xml:getDevices(str)
 	   local devices={}
-	   for id,name,f in string.gmatch(str,"<id>(%d+)</id>\n<name>([\31-\243]-)</name>\n<type>7</type>\n<itemdata><config_data_file>([_%w]+)") do
+	   for id,name,f in string.gmatch(str,"<id>(%d+)</id>\n?<name>([^<^>]-)</name>\n?<type>7</type>\n?<itemdata><config_data_file>([_%w]+)") do
 		  if f == "thermostatV2" then
 			 table.insert(self.nests,id)
 		  end
