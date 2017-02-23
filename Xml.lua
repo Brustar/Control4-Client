@@ -14,19 +14,20 @@ function Xml:create(config)
 		  local tVers = C4:GetVersionInfo()
 		  local strVers = tVers["version"]
 		  local major, minor, _, _ = string.match(strVers, "(%d+)\.(%d+)\.(%d+)\.(%d+)")
-		  
 		  local pattern="(<id>(%d+)</id>\n?<name>[^<^>]-</name>\n?<type>8</type>.*<type>7</type>)"
-		  if major == 2 and minor>8 then
+		  if tonumber(major) == 2 and tonumber(minor) > 8 then
 			 pattern = "(<id>(%d+)</id><name>[^<^>]-</name>\n?<type>8</type>[%s%S]-)</c4i></item></subitems></item></subitems></item>"
 		  end
 		  local room = {}
+		  local i = 1
 		  for str,roomid in string.gmatch(self.config,pattern) do
 			 if str and roomid == id then
 				room.devices=self:getDevices(str)
-				if major == 2 and minor < 9 then
+				if i == 1 then
 				    room.scenes = self:getScenes()
 				end
 			 end
+			 i = i + 1
 		  end
 		  room.id = string.trim(string.format("%4X",tonumber(id)))
 		  room.name = name
@@ -42,28 +43,33 @@ function Xml:create(config)
 	   local str = C4:GetProjectItems("AGENTS","NO_ROOT_TAGS")
 	   
 	   local pattern = "<name>Advanced Lighting</name>\n?<type>9</type>\n?<itemdata><large_image>[^\n]+</large_image><small_image>[^\n]+</small_image></itemdata>\n?<state>([^\n]+)</state>"
+	   local tVers = C4:GetVersionInfo()
+	   local strVers = tVers["version"]
+	   local major, minor, _, _ = string.match(strVers, "(%d+)\.(%d+)\.(%d+)\.(%d+)")
+	   if tonumber(major) == 2 and tonumber(minor) > 8 then
+		  pattern = "<name>Advanced Lighting</name>\n?<type>9</type>\n?<itemdata><small_image>[^\n]-</small_image><large_image>[^\n]-</large_image></itemdata>\n?<state>([^\n]-)</state>"
+	   end
 	   local state = string.match(str,pattern)
 	   state = state:gsub("&lt;","<"):gsub("&gt;",">")
-	   local i = 1
 	   for name,id in string.gmatch(state,"<AdvScene>%s*<name>(.-)</name>[%d%D]-<scene_id>(%d+)</scene_id>") do
 		  local scene = {}
 		  scene.id = string.trim(string.format("%4X",tonumber(id)+1))
 		  scene.name = name
 		  table.insert(scenes , scene)
-		  i = i + 1
 	   end
 
-	   pattern = "<name>Macros</name>\n?<type>9</type>\n?<itemdata><large_image>[^\n]+</large_image><small_image>[^\n]+</small_image></itemdata>\n?<state>([^\n]+)</state>"
-	   state = string.match(str,pattern)
-	   state = state:gsub("&lt;","<"):gsub("&gt;",">")
-	   for id,name in string.gmatch(state,"<id>(%d+)</id><name>(.-)</name>") do
-		  local scene = {}
-		  scene.id = string.trim(string.format("%4X",i+tonumber(id)-1))
-		  scene.name = name
-		  table.insert(scenes , scene)
+	   if tonumber(major) == 2 and tonumber(minor) < 9 then
+		  pattern = "<name>Macros</name>\n?<type>9</type>\n?<itemdata><large_image>[^\n]+</large_image><small_image>[^\n]+</small_image></itemdata>\n?<state>([^\n]+)</state>"
+		  state = string.match(str,pattern)
+		  state = state:gsub("&lt;","<"):gsub("&gt;",">")
+		  for id,name in string.gmatch(state,"<id>(%d+)</id><name>(.-)</name>") do
+			 local scene = {}
+			 scene.id = string.trim(string.format("%4X",i+tonumber(id)-1))
+			 scene.name = name
+			 table.insert(scenes , scene)
+		  end
+	   
 	   end
-	   
-	   
 	   
 	   return scenes
     end
