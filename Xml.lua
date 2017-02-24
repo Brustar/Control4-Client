@@ -25,6 +25,8 @@ function Xml:create(config)
 				room.devices=self:getDevices(str)
 				if i == 1 then
 				    room.scenes = self:getScenes()
+				else
+				    room.scenes = {}
 				end
 			 end
 			 i = i + 1
