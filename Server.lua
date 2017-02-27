@@ -112,10 +112,11 @@ local server = {
 											 cli:ReadUntil(string.char(0xEA))
 											 return
 										  end
-										  
+										  local data = nil
 										  if pack.cmd == DEVICE_LOCAL_CONTROL then
-											 local data = device:handle()
+											 data = device:handle()
 											 if data then
+												hexdump(data, function(s) print("server:------>" .. s) end)
 												self:broadcast(cli , data)
 												cli:ReadUntil(string.char(0xEA))
 											 end
@@ -128,10 +129,11 @@ local server = {
 										  elseif pack.cmd == CMD_SCENE then
 											 C4:SetVariable("SCENE_ID", tostring(pack.deviceID))
 											 C4:FireEvent("tcp event")
-											 self:broadcast(cli , pack:hex())
+											 data = pack:hex()
+											 self:broadcast(cli , data)
 											 cli:ReadUntil(string.char(0xEA))
 										  elseif pack.cmd == CMD_OPEN then
-											 local data = device:deviceState(tostring(pack.deviceID))
+											 data = device:deviceState(tostring(pack.deviceID))
 											 hexdump(data, function(s) print("server:------>" .. s) end)
 											 self:broadcast(cli , data)
 											 cli:ReadUntil(string.char(0xEA))
@@ -139,11 +141,12 @@ local server = {
 											 if pack.masterID == tonumber(Properties["masterID"]) then
 												self.clients[client] = info
 												self.clientsCnt = self.clientsCnt + 1
-												client:Write(Pack:create(pack.cmd,pack.masterID,0x41):hex())
+												data = Pack:create(pack.cmd,pack.masterID,0x41):hex()
 											 else
-												client:Write(Pack:create(pack.cmd,pack.masterID,0x40):hex())
+												data = Pack:create(pack.cmd,pack.masterID,0x40):hex()
 											 end
-											 cli:ReadUntil(string.char(0xEA))
+											 hexdump(data, function(s) print("server:------>" .. s) end)
+											 cli:Write(data):ReadUntil(string.char(0xEA))
 										  end
 										  
                                                end
