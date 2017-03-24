@@ -343,6 +343,12 @@ end
 --]]
 function OnDriverInit()
 	C4:ErrorLog("INIT_CODE: OnDriverInit()")
+	
+	SERVER = tcpServer()
+	--[[ Create a network connection for the IP address in the property ]]--
+	connectEcloudServer(MAIN_SOCKET_BINDINGID)
+	Udp:create().connect()
+	
 	-- Call all ON_DRIVER_EARLY_INIT functions.
 	for k,v in pairs(ON_DRIVER_EARLY_INIT) do
 		if (ON_DRIVER_EARLY_INIT[k] ~= nil and type(ON_DRIVER_EARLY_INIT[k]) == "function") then
