@@ -9,7 +9,9 @@
   <Item type="file" name="Http.lua" />
   <Item type="file" name="Pack.lua" />
   <Item type="file" name="Server.lua" />
+  <Item type="file" name="Sqlite.lua" />
   <Item type="file" name="Udp.lua" />
+  <Item type="file" name="MD5.lua" />
   <Item type="file" name="Xml.lua" />
  </Items>
 </Driver>
