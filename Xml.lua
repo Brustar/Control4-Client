@@ -87,7 +87,7 @@ function Xml:create(config)
 		  device.name = name
 		  device.type = f
 		  if f == "light_v2" then
-			 local subtype = string.match(str,"<c4i>([%.%w]+)</c4i>\n?<subitems>\n?<item>\n?<id>".. id .. "</id>"
+			 local subtype = string.match(str,"<c4i>([%.%w]+)</c4i>\n?<subitems>\n?<item>\n?<id>".. id .. "</id>")
 			 device.subtype = subtype
 		  end
 		  table.insert(devices , device)
