@@ -47,7 +47,6 @@ MAIN_SOCKET_BINDINGID = 6001
 SUB_SOCKET_BINDINGID = 6002
 
 SERVER = nil
-
 --=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 -- Common Driver Code
 --=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -108,8 +107,6 @@ end
 			Lua table of parameters for the sent command
 --]]
 function ExecuteCommand(sCommand, tParams)
-	Dbg:Trace("ExecuteCommand(" .. sCommand .. ")")
-	Dbg:Info(tParams)
 
 	-- Remove any spaces (trim the command)
 	local trimmedCommand = string.gsub(sCommand, " ", "")
@@ -160,7 +157,7 @@ function connectEcloudServer(id)
 end
 
 function LUA_ACTION.Connect()
-     Dbg:Debug("connectting " .. Properties["TCP Address"])
+     --Dbg:Debug("connectting " .. Properties["TCP Address"])
 	SERVER = tcpServer()
 	--[[ Create a network connection for the IP address in the property ]]--
 	connectEcloudServer(MAIN_SOCKET_BINDINGID)
@@ -168,7 +165,7 @@ function LUA_ACTION.Connect()
 end
 
 function LUA_ACTION.Disconnect()
-     Dbg:Debug("Disconnect " .. Properties["TCP Address"])
+     --Dbg:Debug("Disconnect " .. Properties["TCP Address"])
 	--[[ We are connecting to TCP port 2000 ]]--
 	SERVER:stop()
 	C4:NetDisconnect(MAIN_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), "TCP")
@@ -536,6 +533,7 @@ end
 
 function ON_DRIVER_EARLY_INIT.LogLib()
 	-- Create and initialize debug logging
+	print("------------")
 	Dbg = Log:Create()
 	Dbg:SetLogName("base_template PLEASE CHANGE")
 end

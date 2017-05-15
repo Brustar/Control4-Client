@@ -50,6 +50,7 @@ local server = {
       start = function(self, maxClients, bindAddr, port, done)
              local calledDone = false
              self.socket = C4:CreateTCPServer()
+				:Option("reuseaddr",1)
                     :OnResolve(
                           function(srv, endpoints)
                                  -- You do not need to set this callback function if you only want default behavior.

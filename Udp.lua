@@ -27,7 +27,10 @@ function Udp:create()
     end
     
     function udp.stop()
-	   self.timer:Cancel()
+	   if self.timer then
+		  self.timer:Cancel()
+	   end
+	   
 	   C4:NetDisconnect(UDP_CONNECT_ID, UDP_PORT, 'UDP')
     end
     
