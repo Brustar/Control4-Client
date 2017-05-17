@@ -1,3 +1,5 @@
+MD5 = {}
+
 function MD5.md5byFile(filepath)
     local md5 = ""
     local fh = C4:FileOpen(filepath)
