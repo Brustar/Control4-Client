@@ -117,13 +117,13 @@ local server = {
 										  if pack.cmd == DEVICE_LOCAL_CONTROL then
 											 data = device:handle()
 											 if data then
-												hexdump(data, function(s) print("server:------>" .. s) end)
+												hexdump(data, function(s) print("server control:------>" .. s) end)
 												self:broadcast(cli , data)
 												cli:ReadUntil(string.char(0xEA))
 											 end
 										  elseif pack.cmd == CMD_HUMIDITY then --获取环境设备数据 
 											 for _,v in ipairs(device:envData()) do
-												hexdump(v, function(s) print("server:------>" .. s) end)
+												hexdump(v, function(s) print("server state:------>" .. s) end)
 												self:broadcast(cli , v)
 												cli:ReadUntil(string.char(0xEA))
 											 end
