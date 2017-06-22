@@ -35,7 +35,9 @@ CMD_SET_VOLUME_LEVEL = 0xAA
 
 VAR_TEMPERATURE_C = 1131
 VAR_HUMIDITY = 1138
+
 VAR_LEVEL_OPEN = 1000
+VAR_LEVEL = 1001
 
 function Device:create(data)
 
@@ -216,8 +218,13 @@ function Device:create(data)
     end
     
     function device:deviceState(deviceID)
-	   print("deviceID:"..tostring(deviceID))
 	   local variable = C4:GetVariable(deviceID, VAR_LEVEL_OPEN) or "0"
+	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(variable),0,0,0,deviceID)
+	   return pack:hex()
+    end
+    
+    function device:deviceLevel(deviceID)
+	   local variable = C4:GetVariable(deviceID, VAR_LEVEL) or "0"
 	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(variable),0,0,0,deviceID)
 	   return pack:hex()
     end

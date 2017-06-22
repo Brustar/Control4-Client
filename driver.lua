@@ -248,9 +248,11 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	   C4:FireEvent("tcp event")
 	end
 	print("cmd:"..pack.cmd.."bindid:" .. idBinding)
-	if pack.cmd == CMD_OPEN then
+	if pack.cmd == CMD_QUERY then
 	   local data = device:deviceState(tostring(pack.deviceID))
 	   hexdump(data, function(s) Dbg:Debug("------>" .. s) end)
+	   C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
+	   data = device:deviceLevel(tostring(pack.deviceID))
 	   C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
 	end
 end

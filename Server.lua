@@ -133,8 +133,13 @@ local server = {
 											 data = pack:hex()
 											 self:broadcast(cli , data)
 											 cli:ReadUntil(string.char(0xEA))
-										  elseif pack.cmd == CMD_OPEN then
+										  elseif pack.cmd == CMD_QUERY then
 											 data = device:deviceState(tostring(pack.deviceID))
+											 hexdump(data, function(s) print("server:------>" .. s) end)
+											 self:broadcast(cli , data)
+											 cli:ReadUntil(string.char(0xEA))
+											 
+											 data = device:deviceLevel(tostring(pack.deviceID))
 											 hexdump(data, function(s) print("server:------>" .. s) end)
 											 self:broadcast(cli , data)
 											 cli:ReadUntil(string.char(0xEA))
