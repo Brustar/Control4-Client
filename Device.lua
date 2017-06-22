@@ -225,7 +225,7 @@ function Device:create(data)
     
     function device:deviceLevel(deviceID)
 	   local variable = C4:GetVariable(deviceID, VAR_LEVEL) or "0"
-	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(variable),0,0,0,deviceID)
+	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),0x1A,tonumber(variable),0,0,deviceID)
 	   return pack:hex()
     end
     
