@@ -252,8 +252,16 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	   local data = device:deviceState(tostring(pack.deviceID))
 	   hexdump(data, function(s) Dbg:Debug("------>" .. s) end)
 	   C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
-	   data = device:deviceLevel(tostring(pack.deviceID))
-	   C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
+	   if pack.deviceType == 0x03 then
+		  data = device:deviceLevel(tostring(pack.deviceID))
+		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
+	   end
+	   if pack.deviceType == 0x31 then
+		  for _,v in ipairs(device:envData()) do
+			 hexdump(v, function(s) Dbg:Debug("------>" .. s) end)
+			 C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), v)
+		  end
+	   end
 	end
 end
 

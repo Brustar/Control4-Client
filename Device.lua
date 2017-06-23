@@ -70,25 +70,21 @@ function Device:create(data)
 			 C4:SendToDevice(pack.deviceID,"SET_BUTTON_COLOR", {ON_COLOR = string.format("%2x%2x%2x",pack.r,pack.b,pack.g)})
 		  end
 	   elseif pack.deviceType == self.AIRCONDITION then	--空调
-		  local variableID = self:airDeviceVariableID(pack.deviceID)
-		  if variableID == 0 then
-			 return nil
-		  end
 		  if pack.state == CMD_ON then
-			 C4:SetDeviceVariable(pack.deviceID, variableID, 9)
+			 C4:SendToDevice(pack.deviceID, "ON", {})
 		  elseif pack.state == CMD_OFF then
-			 C4:SetDeviceVariable(pack.deviceID, variableID, 8)
+			 C4:SendToDevice(pack.deviceID, "OFF", {})
 		  elseif pack.state == CMD_HEAT then
-			 C4:SetDeviceVariable(pack.deviceID, variableID, 6)
+			 C4:SendToDevice(pack.deviceID, "HEAT", {})
 		  elseif pack.state == CMD_COOL then
-			 C4:SetDeviceVariable(pack.deviceID, variableID, 7)
+			 C4:SendToDevice(pack.deviceID, "COOL", {})
 		  elseif pack.state == CMD_DRY then
-			 C4:SetDeviceVariable(pack.deviceID, variableID, 4)
+			 C4:SendToDevice(pack.deviceID, "DRY", {})
 		  elseif pack.state == CMD_FAN then
-			 C4:SetDeviceVariable(pack.deviceID, variableID, 5)
+			 C4:SendToDevice(pack.deviceID, "FAN", {})
 		  elseif pack.state == CMD_TEMPRETURE then
 			 if pack.r<30 and pack.r>15 then
-				C4:SetDeviceVariable(pack.deviceID, variableID, pack.r)
+				C4:SendToDevice(pack.deviceID, "TEMPTURE", {degree = pack.r})
 			 end
 		  end
 	   elseif pack.deviceType == self.BLIND or pack.deviceType == self.BLIND + 1 then
@@ -209,7 +205,7 @@ function Device:create(data)
 		  end
 	   else
 		  idDevice = tonumber(Properties["Aircondition ID"])
-		  pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_TEMPRETURE,tonumber(C4:GetVariable(idDevice, self:airDeviceVariableID(idDevice,"CURRENT_TEMPRETURE"))))
+		  pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_TEMPRETURE,tonumber(C4:GetVariable(idDevice, self:airDeviceVariableID(idDevice,"CURRENT_TEMPRETURE"))),0,0,idDevice)
 		  local data = pack:hex()
 		  table.insert(ret,data)
 	   end

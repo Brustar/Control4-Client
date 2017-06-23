@@ -23,7 +23,7 @@
     <power_command_delay>0</power_command_delay>
     <power_delay>0</power_delay>
     <power_command_needed>False</power_command_needed>
-    <script file="driver.lua" />
+    <script file="driver.lua" encryption="2" />
     <actions>
       <action>
         <name>Connect</name>
