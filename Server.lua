@@ -153,7 +153,7 @@ local server = {
 											 end
 											 
 											 if pack.deviceType == device.TV or pack.deviceType == device.DVD or pack.deviceType == device.BGMUSIC then
-												data = device:volume()
+												data = device:volume(tostring(pack.deviceID))
 												self:broadcast(cli , data)
 												cli:ReadUntil(string.char(0xEA))
 											 end

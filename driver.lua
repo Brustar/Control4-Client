@@ -264,7 +264,7 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	   end
 	   
 	   if pack.deviceType == device.TV or pack.deviceType == device.DVD or pack.deviceType == device.BGMUSIC then
-		  data = device:volume()
+		  data = device:volume(tostring(pack.deviceID))
 		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
 	   end
 	end
