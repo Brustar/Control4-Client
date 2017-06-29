@@ -23,7 +23,7 @@ CMD_PAUSE = 0x14
 CMD_SKIP_FWD = 0x18
 CMD_STOP = 0x13
 CMD_EJECT = 0x20
-CMD_MENU = 0x11
+CMD_MENU = 0x22
 CMD_UP = 0x06
 CMD_DOWN = 0x08
 CMD_LEFT = 0x05
@@ -38,6 +38,7 @@ VAR_HUMIDITY = 1138
 
 VAR_LEVEL_OPEN = 1000
 VAR_LEVEL = 1001
+CURRENT_VOLUME = 1011
 
 function Device:create(data)
 
@@ -126,6 +127,8 @@ function Device:create(data)
 			 C4:SendToDevice(pack.deviceID,"RIGHT",{})
 		  elseif pack.state == CMD_ENTER then
 			 C4:SendToDevice(pack.deviceID,"ENTER",{})
+		  elseif pack.state == CMD_SET_VOLUME_LEVEL then
+			 C4:SendToDevice(C4:RoomGetId()),"SET_VOLUME_LEVEL",{LEVEL = pack.r})
 		  end
 	   elseif pack.deviceType == self.TV then
 		  --MUTE_TOGGLE
@@ -221,7 +224,13 @@ function Device:create(data)
     
     function device:deviceLevel(deviceID)
 	   local variable = C4:GetVariable(deviceID, VAR_LEVEL) or "0"
-	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),0x1A,tonumber(variable),0,0,deviceID)
+	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_RAMP,tonumber(variable),0,0,deviceID)
+	   return pack:hex()
+    end
+    
+    function device:volume()
+	   local variable = C4:GetVariable(C4:RoomGetId(), CURRENT_VOLUME))
+	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_SET_VOLUME_LEVEL,tonumber(variable),0,0,deviceID)
 	   return pack:hex()
     end
     

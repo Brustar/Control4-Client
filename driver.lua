@@ -252,15 +252,20 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	   local data = device:deviceState(tostring(pack.deviceID))
 	   hexdump(data, function(s) Dbg:Debug("------>" .. s) end)
 	   C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
-	   if pack.deviceType == 0x03 then
+	   if pack.deviceType == device.LIGHT then
 		  data = device:deviceLevel(tostring(pack.deviceID))
 		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
 	   end
-	   if pack.deviceType == 0x31 then
+	   if pack.deviceType == device.AIRCONDITION then
 		  for _,v in ipairs(device:envData()) do
 			 hexdump(v, function(s) Dbg:Debug("------>" .. s) end)
 			 C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), v)
 		  end
+	   end
+	   
+	   if pack.deviceType == device.TV or pack.deviceType == device.DVD or pack.deviceType == device.BGMUSIC then
+		  data = device:volume()
+		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
 	   end
 	end
 end

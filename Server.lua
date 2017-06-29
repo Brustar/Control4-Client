@@ -138,11 +138,25 @@ local server = {
 											 hexdump(data, function(s) print("server:------>" .. s) end)
 											 self:broadcast(cli , data)
 											 cli:ReadUntil(string.char(0xEA))
+											 if pack.deviceType == device.LIGHT then
+												data = device:deviceLevel(tostring(pack.deviceID))
+												hexdump(data, function(s) print("server:------>" .. s) end)
+												self:broadcast(cli , data)
+												cli:ReadUntil(string.char(0xEA))
+											 end
 											 
-											 data = device:deviceLevel(tostring(pack.deviceID))
-											 hexdump(data, function(s) print("server:------>" .. s) end)
-											 self:broadcast(cli , data)
-											 cli:ReadUntil(string.char(0xEA))
+											 if pack.deviceType == device.AIRCONDITION then
+												for _,v in ipairs(device:envData()) do
+												    self:broadcast(cli , v)
+												end
+												cli:ReadUntil(string.char(0xEA))
+											 end
+											 
+											 if pack.deviceType == device.TV or pack.deviceType == device.DVD or pack.deviceType == device.BGMUSIC then
+												data = device:volume()
+												self:broadcast(cli , data)
+												cli:ReadUntil(string.char(0xEA))
+											 end
 										  elseif pack.cmd == MASTER_AUTH then
 											 if pack.masterID == tonumber(Properties["masterID"]) then
 												self.clients[client] = info
