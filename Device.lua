@@ -173,6 +173,13 @@ function Device:create(data)
 		  
 	   elseif pack.deviceType == self.LOCK then
 	   elseif pack.deviceType == self.AMPLIFIER then
+		  local irCodeID = 12
+		  if pack.state == CMD_ON then
+			 C4:SendToDevice(pack.deviceID,"EMIT_CODE",{ID = irCodeID})
+		  elseif pack.state == CMD_OFF then
+			 irCodeID = 102
+			 C4:SendToDevice(pack.deviceID,"EMIT_CODE",{ID = irCodeID})
+		  end
 	   else
 		  return nil
 	   end
