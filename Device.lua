@@ -29,6 +29,7 @@ CMD_DOWN = 0x08
 CMD_LEFT = 0x05
 CMD_RIGHT = 0x07
 CMD_ENTER = 0x09
+CMD_BACK = 0x10
 
 CMD_MUTE_TOGGLE = 0x04
 CMD_SET_VOLUME_LEVEL = 0xAA
@@ -144,6 +145,8 @@ function Device:create(data)
 			 C4:SendToDevice(pack.deviceID,"ENTER",{})
 		  elseif pack.state == CMD_MUTE_TOGGLE then
 			 C4:SendToDevice(pack.deviceID,"MUTE_TOGGLE",{})
+		  elseif pack.state == CMD_BACK then
+			 C4:SendToDevice(pack.deviceID,"BACK",{})
 		  elseif pack.state == CMD_SET_VOLUME_LEVEL then
 			 C4:SendToDevice(pack.deviceID,"SET_VOLUME_LEVEL",{LEVEL = pack.r})
 		  end
