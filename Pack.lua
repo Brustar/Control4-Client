@@ -11,8 +11,6 @@ CMD_HUMIDITY = 0x8A
 CMD_QUERY = 0x9A
 
 function Pack:create(cmd,masterID,state,r,g,b,deviceID,deviceType)
-    --print("cmd:"..cmd)
-    --print("masterID:"..masterID)
     local pack = {}
     local pattern = "bb>Hbbbb>Hbb"
     

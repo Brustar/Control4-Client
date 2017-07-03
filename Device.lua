@@ -186,6 +186,7 @@ function Device:create(data)
 	   else
 		  return nil
 	   end
+	   pack.cmd = 0x02
 	   return pack:hex()
     end
     

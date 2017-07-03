@@ -228,11 +228,12 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	if pack.cmd == SUB_AUTHOR then
 	   C4:UpdateProperty("Tcp Status", "tcp connected success")
 	end
-    
+
 	if pack.cmd == DEVICE_CONTROL then
 	   local data = device:handle()
 	   if data then
-		  --C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
+		  hexdump(data, function(s) print("------>" .. s) end)
+		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
 	   end
      end
 	
