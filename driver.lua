@@ -248,13 +248,13 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	   C4:SetVariable("SCENE_ID", tostring(pack.deviceID))
 	   C4:FireEvent("tcp event")
 	end
-	print("cmd:"..pack.cmd.."bindid:" .. idBinding)
+
 	if pack.cmd == CMD_QUERY then
-	   local data = device:deviceState(tostring(pack.deviceID))
-	   hexdump(data, function(s) Dbg:Debug("------>" .. s) end)
+	   local data = device:deviceState(tostring(pack.deviceID),pack.deviceType)
+	   hexdump(data, function(s) print("------>" .. s) end)
 	   C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
 	   if pack.deviceType == device.LIGHT then
-		  data = device:deviceLevel(tostring(pack.deviceID))
+		  data = device:deviceLevel(tostring(pack.deviceID),pack.deviceType)
 		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
 	   end
 	   if pack.deviceType == device.AIRCONDITION then
@@ -265,7 +265,7 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	   end
 	   
 	   if pack.deviceType == device.TV or pack.deviceType == device.DVD or pack.deviceType == device.BGMUSIC then
-		  data = device:volume(tostring(pack.deviceID))
+		  data = device:volume(tostring(pack.deviceID),pack.deviceType)
 		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
 	   end
 	end

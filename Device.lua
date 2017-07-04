@@ -129,7 +129,7 @@ function Device:create(data)
 		  elseif pack.state == CMD_ENTER then
 			 C4:SendToDevice(pack.deviceID,"ENTER",{})
 		  elseif pack.state == CMD_SET_VOLUME_LEVEL then
-			 C4:SendToDevice(C4:RoomGetId(),"SET_VOLUME_LEVEL",{LEVEL = pack.r})
+			 C4:SendToDevice(pack.deviceID,"SET_VOLUME_LEVEL",{LEVEL = pack.r})
 		  end
 	   elseif pack.deviceType == self.TV then
 		  --MUTE_TOGGLE
@@ -169,6 +169,8 @@ function Device:create(data)
 			 C4:SendToDevice(C4:RoomGetId(),"MUTE_ON",{})
 		  elseif pack.state == CMD_SET_VOLUME_LEVEL then
 			 C4:SendToDevice(C4:RoomGetId(),"SET_VOLUME_LEVEL",{LEVEL = pack.r})
+		  elseif pack.state == CMD_SHUFFLE then
+			 C4:SendToDevice(pack.deviceID,"SET_SHUFFLE",{})
 		  end
 	   elseif pack.deviceType == self.PROJECTOR then
 	   elseif pack.deviceType == self.SCREEN then
@@ -227,21 +229,22 @@ function Device:create(data)
 	   return ret
     end
     
-    function device:deviceState(deviceID)
+    function device:deviceState(deviceID,deviceType)
 	   local variable = C4:GetVariable(deviceID, VAR_LEVEL_OPEN) or "0"
-	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(variable),0,0,0,deviceID)
+	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(variable),0,0,0,deviceID,deviceType)
 	   return pack:hex()
     end
     
-    function device:deviceLevel(deviceID)
+    function device:deviceLevel(deviceID,deviceType)
 	   local variable = C4:GetVariable(deviceID, VAR_LEVEL) or "0"
-	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_RAMP,tonumber(variable),0,0,deviceID)
+	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_RAMP,tonumber(variable),0,0,deviceID,deviceType)
 	   return pack:hex()
     end
     
-    function device:volume(deviceID)
-	   local variable = C4:GetVariable(C4:RoomGetId(), CURRENT_VOLUME)
-	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_SET_VOLUME_LEVEL,tonumber(variable),0,0,deviceID)
+    function device:volume(deviceID,deviceType)
+	   local variable = tonumber(C4:GetVariable(C4:RoomGetId(), CURRENT_VOLUME))
+	   if variable < 0 then variable = 0 end
+	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_SET_VOLUME_LEVEL,variable,0,0,deviceID,deviceType)
 	   return pack:hex()
     end
     

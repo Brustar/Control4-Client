@@ -134,12 +134,12 @@ local server = {
 											 self:broadcast(cli , data)
 											 cli:ReadUntil(string.char(0xEA))
 										  elseif pack.cmd == CMD_QUERY then
-											 data = device:deviceState(tostring(pack.deviceID))
+											 data = device:deviceState(tostring(pack.deviceID),pack.deviceType)
 											 hexdump(data, function(s) print("server:------>" .. s) end)
 											 self:broadcast(cli , data)
 											 cli:ReadUntil(string.char(0xEA))
 											 if pack.deviceType == device.LIGHT then
-												data = device:deviceLevel(tostring(pack.deviceID))
+												data = device:deviceLevel(tostring(pack.deviceID),pack.deviceType)
 												hexdump(data, function(s) print("server:------>" .. s) end)
 												self:broadcast(cli , data)
 												cli:ReadUntil(string.char(0xEA))
@@ -153,7 +153,7 @@ local server = {
 											 end
 											 
 											 if pack.deviceType == device.TV or pack.deviceType == device.DVD or pack.deviceType == device.BGMUSIC then
-												data = device:volume(tostring(pack.deviceID))
+												data = device:volume(tostring(pack.deviceID),pack.deviceType)
 												self:broadcast(cli , data)
 												cli:ReadUntil(string.char(0xEA))
 											 end
