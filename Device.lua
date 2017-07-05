@@ -46,7 +46,7 @@ function Device:create(data)
     device={}
     device.data = data
     
-    device.LIGHT=0x03
+    device.LIGHT=0x02
     device.BLIND = 0x21
     device.AIRCONDITION = 0x31
     
