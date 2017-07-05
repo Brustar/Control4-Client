@@ -155,7 +155,7 @@ function Device:create(data)
 	   
 	   elseif pack.deviceType == self.BGMUSIC then
 		  --此驱动必须和my music在同一房间
-		  if pack.state == CMD_PLAY then
+		  if pack.state == CMD_PLAY or pack.state == CMD_ON then
 			 C4:SendToDevice(C4:RoomGetId(),"PLAY",{})
 		  elseif pack.state == CMD_SKIP_REV then
 			 C4:SendToDevice(C4:RoomGetId(),"SKIP_REV",{})
@@ -163,10 +163,8 @@ function Device:create(data)
 			 C4:SendToDevice(C4:RoomGetId(),"PAUSE",{})
 		  elseif pack.state == CMD_SKIP_FWD then
 			 C4:SendToDevice(C4:RoomGetId(),"SKIP_FWD",{})
-		  elseif pack.state == CMD_STOP then
+		  elseif pack.state == CMD_STOP or pack.state == CMD_OFF then
 			 C4:SendToDevice(C4:RoomGetId(),"STOP",{})
-		  elseif pack.state == CMD_MENU then
-			 C4:SendToDevice(C4:RoomGetId(),"MUTE_ON",{})
 		  elseif pack.state == CMD_SET_VOLUME_LEVEL then
 			 C4:SendToDevice(C4:RoomGetId(),"SET_VOLUME_LEVEL",{LEVEL = pack.r})
 		  elseif pack.state == CMD_SHUFFLE then
