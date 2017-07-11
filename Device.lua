@@ -43,6 +43,8 @@ VAR_LEVEL_OPEN = 1000
 VAR_LEVEL = 1001
 CURRENT_VOLUME = 1011
 
+AMPLIFIER_ID = 329
+
 function Device:create(data)
 
     device={}
@@ -133,9 +135,9 @@ function Device:create(data)
 		  elseif pack.state == CMD_SET_VOLUME_LEVEL then
 			 C4:SendToDevice(pack.deviceID,"SET_VOLUME_LEVEL",{LEVEL = pack.r})
 		  elseif pack.state == CMD_VOLUME_DOWN then
-			 C4:SendToDevice(pack.deviceID,"EMIT_CODE",{ID = 107})
+			 C4:SendToDevice(AMPLIFIER_ID,"EMIT_CODE",{ID = 107})
 		  elseif pack.state == CMD_VOLUME_UP then
-			 C4:SendToDevice(pack.deviceID,"EMIT_CODE",{ID = 106})
+			 C4:SendToDevice(AMPLIFIER_ID,"EMIT_CODE",{ID = 106})
 		  end
 	   elseif pack.deviceType == self.TV then
 		  --MUTE_TOGGLE
