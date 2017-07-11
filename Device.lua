@@ -30,6 +30,8 @@ CMD_LEFT = 0x05
 CMD_RIGHT = 0x07
 CMD_ENTER = 0x09
 CMD_BACK = 0x10
+CMD_VOLUME_UP = 0x02
+CMD_VOLUME_DOWN = 0x03
 
 CMD_MUTE_TOGGLE = 0x04
 CMD_SET_VOLUME_LEVEL = 0xAA
@@ -130,6 +132,10 @@ function Device:create(data)
 			 C4:SendToDevice(pack.deviceID,"ENTER",{})
 		  elseif pack.state == CMD_SET_VOLUME_LEVEL then
 			 C4:SendToDevice(pack.deviceID,"SET_VOLUME_LEVEL",{LEVEL = pack.r})
+		  elseif pack.state == CMD_VOLUME_DOWN then
+			 C4:SendToDevice(pack.deviceID,"EMIT_CODE",{ID = 107})
+		  elseif pack.state == CMD_VOLUME_UP then
+			 C4:SendToDevice(pack.deviceID,"EMIT_CODE",{ID = 106})
 		  end
 	   elseif pack.deviceType == self.TV then
 		  --MUTE_TOGGLE
@@ -166,7 +172,7 @@ function Device:create(data)
 		  elseif pack.state == CMD_STOP or pack.state == CMD_OFF then
 			 C4:SendToDevice(C4:RoomGetId(),"STOP",{})
 		  elseif pack.state == CMD_SET_VOLUME_LEVEL then
-			 C4:SendToDevice(C4:RoomGetId(),"SET_VOLUME_LEVEL",{LEVEL = pack.r})
+			 C4:SendToDevice(C4:RoomGetId(),"SET_VOLUME_LEVEL",{LEVEL = pack.r/2})
 		  elseif pack.state == CMD_SHUFFLE then
 			 C4:SendToDevice(pack.deviceID,"SET_SHUFFLE",{})
 		  end
