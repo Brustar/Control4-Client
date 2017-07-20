@@ -45,6 +45,8 @@ CURRENT_VOLUME = 1011
 
 AMPLIFIER_ID = 329
 
+CURRENT_MEDIA = 1031
+
 function Device:create(data)
 
     device={}
@@ -162,9 +164,14 @@ function Device:create(data)
 	   elseif pack.deviceType == self.FM then
 	   
 	   elseif pack.deviceType == self.BGMUSIC then
+		  print("bg:",pack.deviceID)
 		  --此驱动必须和my music在同一房间
 		  if pack.state == CMD_PLAY or pack.state == CMD_ON then
-			 C4:SendToDevice(C4:RoomGetId(),"PLAY",{})
+		  	if self:hasSong(C4:RoomGetId())>0 then
+		  		C4:SendToDevice(C4:RoomGetId(),"PLAY",{})
+		  	else
+			 	self:playSong(pack.deviceID,C4:RoomGetId())
+			end
 		  elseif pack.state == CMD_SKIP_REV then
 			 C4:SendToDevice(C4:RoomGetId(),"SKIP_REV",{})
 		  elseif pack.state == CMD_PAUSE then
@@ -264,6 +271,17 @@ function Device:create(data)
 		  end
 	   end
 	   return 0
+    end
+
+    function device:playSong(deviceID,roomId)
+    	local param = {type = "PLAYLIST",idMedia = 1,idRoom = roomId,volume = 50,shuffle = 1,["repeat"] = 0}
+		C4:SendToDevice(deviceID,"DEVICE_SELECTED",param)
+    end
+
+    function device:hasSong(roomId)
+	   local xml = C4:GetVariable(roomId,CURRENT_MEDIA)
+	   local songs = C4:ParseXml(xml)
+	   return #songs.ChildNodes
     end
     
     return device

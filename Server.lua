@@ -4,6 +4,9 @@ require "Device"
 SERVER_PORT = 8009
 MASTER_AUTH = 0x84
 
+MASTER_BEAT = 0x31
+MASTER_BEAT_ANSWER = 0x32
+
 local server = {
       clients = {},
       clientsCnt = 0,
@@ -167,6 +170,13 @@ local server = {
 											 end
 											 hexdump(data, function(s) print("server:------>" .. s) end)
 											 cli:Write(data):ReadUntil(string.char(0xEA))
+										  elseif pack.cmd == MASTER_BEAT then
+											 if pack.masterID == tonumber(Properties["masterID"]) then
+												data = Pack:create(MASTER_BEAT_ANSWER,pack.masterID):hex()
+											 
+												hexdump(data, function(s) print("server:------>" .. s) end)
+												cli:Write(data):ReadUntil(string.char(0xEA))
+											 end
 										  end
 										  
                                                end
