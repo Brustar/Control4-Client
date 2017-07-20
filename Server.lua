@@ -160,6 +160,12 @@ local server = {
 												self:broadcast(cli , data)
 												cli:ReadUntil(string.char(0xEA))
 											 end
+											 
+											 if pack.deviceType == device.BGMUSIC then
+												data = device:isPlaying(C4:RoomGetId(),pack.deviceID,pack.deviceType)
+												self:broadcast(cli , data)
+												cli:ReadUntil(string.char(0xEA))
+											 end
 										  elseif pack.cmd == MASTER_AUTH then
 											 if pack.masterID == tonumber(Properties["masterID"]) then
 												self.clients[client] = info

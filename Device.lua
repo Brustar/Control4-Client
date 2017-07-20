@@ -274,7 +274,7 @@ function Device:create(data)
     end
 
     function device:playSong(deviceID,roomId)
-    	local param = {type = "PLAYLIST",idMedia = 1,idRoom = roomId,volume = 50,shuffle = 1,["repeat"] = 0}
+    	local param = {["type"] = "PLAYLIST",idMedia = 1,idRoom = roomId,volume = 35,shuffle = 1,["repeat"] = 0}
 		C4:SendToDevice(deviceID,"DEVICE_SELECTED",param)
     end
 
@@ -282,6 +282,22 @@ function Device:create(data)
 	   local xml = C4:GetVariable(roomId,CURRENT_MEDIA)
 	   local songs = C4:ParseXml(xml)
 	   return #songs.ChildNodes
+    end
+
+    function device:isPlaying(roomId,deviceID,deviceType)
+	   local playing = 0
+	   if self:hasSong(roomId) then
+
+		  local xml = C4:GetVariable(roomId,CURRENT_MEDIA)
+
+		  local songs = C4:ParseXml(xml)
+		  if os.time()- songs.ChildNodes[9].Value<5*60 then
+			 playing = 1
+		  end
+	   end
+
+	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),playing,0,0,0,deviceID,deviceType)
+	   return pack:hex()
     end
     
     return device

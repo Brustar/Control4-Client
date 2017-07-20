@@ -268,6 +268,11 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 		  data = device:volume(tostring(pack.deviceID),pack.deviceType)
 		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
 	   end
+
+	   if pack.deviceType == device.BGMUSIC then
+		  data = device:isPlaying(C4:RoomGetId(),pack.deviceID,pack.deviceType)
+		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
+	   end
 	end
 end
 
