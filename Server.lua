@@ -109,7 +109,7 @@ local server = {
                                  local info = {}
                                  client:OnRead(
                                               function(cli, strData)
-										  hexdump(strData, function(s) print("server:<------ " .. s) end)
+										  hexdump(strData, function(s) Dbg:Debug("server:<------ " .. s) end)
 										  local pack = Pack.decode(strData)
 										  local device = Device:create(pack)
 										  if not (pack.head == 0xEC and pack.tail == 0xEA and pack.masterID == tonumber(Properties["masterID"])) then
@@ -120,13 +120,13 @@ local server = {
 										  if pack.cmd == DEVICE_LOCAL_CONTROL then
 											 data = device:handle()
 											 if data then
-												hexdump(data, function(s) print("server control:------>" .. s) end)
+												hexdump(data, function(s) Dbg:Debug("server control:------>" .. s) end)
 												self:broadcast(cli , data)
 												cli:ReadUntil(string.char(0xEA))
 											 end
 										  elseif pack.cmd == CMD_HUMIDITY then --获取环境设备数据 
 											 for _,v in ipairs(device:envData()) do
-												hexdump(v, function(s) print("server state:------>" .. s) end)
+												hexdump(v, function(s) Dbg:Debug("server state:------>" .. s) end)
 												self:broadcast(cli , v)
 												cli:ReadUntil(string.char(0xEA))
 											 end
@@ -138,12 +138,14 @@ local server = {
 											 cli:ReadUntil(string.char(0xEA))
 										  elseif pack.cmd == CMD_QUERY then
 											 data = device:deviceState(tostring(pack.deviceID),pack.deviceType)
-											 hexdump(data, function(s) print("server:------>" .. s) end)
-											 self:broadcast(cli , data)
-											 cli:ReadUntil(string.char(0xEA))
+											 if data then
+												hexdump(data, function(s) Dbg:Debug("server:------>" .. s) end)
+												self:broadcast(cli , data)
+												cli:ReadUntil(string.char(0xEA))
+											 end
 											 if pack.deviceType == device.LIGHT then
 												data = device:deviceLevel(tostring(pack.deviceID),pack.deviceType)
-												hexdump(data, function(s) print("server:------>" .. s) end)
+												hexdump(data, function(s) Dbg:Debug("server:------>" .. s) end)
 												self:broadcast(cli , data)
 												cli:ReadUntil(string.char(0xEA))
 											 end
@@ -162,7 +164,7 @@ local server = {
 											 end
 											 
 											 if pack.deviceType == device.BGMUSIC then
-												data = device:isPlaying(C4:RoomGetId(),pack.deviceID,pack.deviceType)
+												data = device:isPlaying(pack.deviceID,pack.deviceType)
 												self:broadcast(cli , data)
 												cli:ReadUntil(string.char(0xEA))
 											 end
@@ -174,13 +176,13 @@ local server = {
 											 else
 												data = Pack:create(pack.cmd,pack.masterID,0x40):hex()
 											 end
-											 hexdump(data, function(s) print("server:------>" .. s) end)
+											 hexdump(data, function(s) Dbg:Debug("server:------>" .. s) end)
 											 cli:Write(data):ReadUntil(string.char(0xEA))
 										  elseif pack.cmd == MASTER_BEAT then
 											 if pack.masterID == tonumber(Properties["masterID"]) then
 												data = Pack:create(MASTER_BEAT_ANSWER,pack.masterID):hex()
 											 
-												hexdump(data, function(s) print("server:------>" .. s) end)
+												hexdump(data, function(s) Dbg:Debug("server:------>" .. s) end)
 												cli:Write(data):ReadUntil(string.char(0xEA))
 											 end
 										  end

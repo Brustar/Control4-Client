@@ -31,6 +31,10 @@ function Sqlite:create()
 	   end
 	   return ret
     end
+
+    function sqlite:close()
+    	self.conn:close()
+    end
     
     return sqlite
 end

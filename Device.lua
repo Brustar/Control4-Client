@@ -164,7 +164,6 @@ function Device:create(data)
 	   elseif pack.deviceType == self.FM then
 	   
 	   elseif pack.deviceType == self.BGMUSIC then
-		  print("bg:",pack.deviceID)
 		  --此驱动必须和my music在同一房间
 		  if pack.state == CMD_PLAY or pack.state == CMD_ON then
 		  	if self:hasSong(C4:RoomGetId())>0 then
@@ -206,9 +205,6 @@ function Device:create(data)
     end
     
     function device:switch(pack)
-	   print("state:" .. pack.state)
-	   print("type...".. pack.deviceType)
-	   print("device..." .. pack.deviceID)
 	   if pack.state == CMD_ON then
 		  C4:SendToDevice(pack.deviceID,"ON",{})
 	   elseif pack.state == CMD_OFF then
@@ -243,6 +239,9 @@ function Device:create(data)
     end
     
     function device:deviceState(deviceID,deviceType)
+	   if deviceType == self.BGMUSIC then
+		  return nil
+	   end
 	   local variable = C4:GetVariable(deviceID, VAR_LEVEL_OPEN) or "0"
 	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(variable),0,0,0,deviceID,deviceType)
 	   return pack:hex()
@@ -284,18 +283,11 @@ function Device:create(data)
 	   return #songs.ChildNodes
     end
 
-    function device:isPlaying(roomId,deviceID,deviceType)
+    function device:isPlaying(deviceID,deviceType)
 	   local playing = 0
-	   if self:hasSong(roomId) then
-
-		  local xml = C4:GetVariable(roomId,CURRENT_MEDIA)
-
-		  local songs = C4:ParseXml(xml)
-		  if os.time()- songs.ChildNodes[9].Value<5*60 then
-			 playing = 1
-		  end
+	   if C4:GetVariable(deviceID,VAR_LEVEL) == "PLAY" then
+		  playing = 1
 	   end
-
 	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),playing,0,0,0,deviceID,deviceType)
 	   return pack:hex()
     end

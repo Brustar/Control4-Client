@@ -232,7 +232,7 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	if pack.cmd == DEVICE_CONTROL then
 	   local data = device:handle()
 	   if data then
-		  hexdump(data, function(s) print("------>" .. s) end)
+		  hexdump(data, function(s) Dbg:Debug("------>" .. s) end)
 		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
 	   end
      end
@@ -251,8 +251,10 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 
 	if pack.cmd == CMD_QUERY then
 	   local data = device:deviceState(tostring(pack.deviceID),pack.deviceType)
-	   hexdump(data, function(s) print("------>" .. s) end)
-	   C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
+	   if data then
+		  hexdump(data, function(s) Dbg:Debug("------>" .. s) end)
+		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
+	   end
 	   if pack.deviceType == device.LIGHT then
 		  data = device:deviceLevel(tostring(pack.deviceID),pack.deviceType)
 		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
@@ -270,26 +272,21 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	   end
 
 	   if pack.deviceType == device.BGMUSIC then
-		  data = device:isPlaying(C4:RoomGetId(),pack.deviceID,pack.deviceType)
+		  data = device:isPlaying(pack.deviceID,pack.deviceType)
 		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
 	   end
 	end
 end
 
 function OnConnectionStatusChanged(idBinding, nPort, strStatus)
-    print("idBinding:" .. idBinding)
-    print("nPort:" .. nPort)
-    print("strStatus:" .. strStatus)
     if (strStatus == "ONLINE") then
 	   if (idBinding == MAIN_SOCKET_BINDINGID) then
 		  local pack = Pack:create(MASTER_AUTHOR,tonumber(Properties["masterID"]))
-		  hexdump(pack:hex())
 		  C4:SendToNetwork(MAIN_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), pack:hex())
 	   end
     
 	   if (idBinding == SUB_SOCKET_BINDINGID) then
 		  local pack = Pack:create(SUB_AUTHOR,tonumber(Properties["masterID"]))
-		  hexdump(pack:hex())
 		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), pack:hex())
 	   end
 	   
@@ -554,7 +551,6 @@ end
 
 function ON_DRIVER_EARLY_INIT.LogLib()
 	-- Create and initialize debug logging
-	print("------------")
 	Dbg = Log:Create()
 	Dbg:SetLogName("base_template PLEASE CHANGE")
 end
