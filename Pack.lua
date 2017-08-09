@@ -7,7 +7,7 @@ DEVICE_LOCAL_CONTROL = 0x04
 CMD_UPLOAD = 0x01
 CMD_SCENE = 0x89
 
-CMD_HUMIDITY = 0x8A
+PACK_HUMIDITY = 0x8A
 CMD_QUERY = 0x9A
 
 function Pack:create(cmd,masterID,state,r,g,b,deviceID,deviceType)

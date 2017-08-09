@@ -20,7 +20,7 @@ local server = {
       end,
       broadcast = function(self, client, message)
              local info = self.clients[client]
-             print("broadcast for client " .. tostring(client) .. " info: " ..tostring(info))
+             Dbg:Debug("broadcast for client " .. tostring(client) .. " info: " ..tostring(info))
              if (info ~= nil) then
                     self:notifyOthers(client, message)
                     client:Write(message)
@@ -45,7 +45,7 @@ local server = {
                     self.clients = {}
                     self.clientsCnt = 0
                     for cli,info in pairs(clients) do
-                          print("Disconnecting " .. cli:GetRemoteAddress().ip .. ":" .. cli:GetRemoteAddress().port)
+                          Dbg:Debug("Disconnecting " .. cli:GetRemoteAddress().ip .. ":" .. cli:GetRemoteAddress().port)
                           cli:Write(""):Close(true)
                     end
              end
@@ -65,9 +65,9 @@ local server = {
                                  -- anything, and it will call the OnError handler with error code 22 (Invalid argument)
                                  -- return 1 -- This is default behavior
                                  -- return 0 -- Abort the listen request
-                                 print("Server " .. tostring(srv) .. " resolved listening address")
+                                 Dbg:Debug("Server " .. tostring(srv) .. " resolved listening address")
                                  for i = 1, #endpoints do
-                                        print("Available endpoints: [" .. i .. "] ip=" .. endpoints[i].ip .. ":" .. endpoints[i].port)
+                                        Dbg:Debug("Available endpoints: [" .. i .. "] ip=" .. endpoints[i].ip .. ":" .. endpoints[i].port)
                                  end
                           end
                     )
@@ -76,7 +76,7 @@ local server = {
                                  -- Handling this callback is optional.  It merely lets you know that the server is now actually listening.
                                  local addr = srv:GetLocalAddress()
 						   C4:UpdateProperty("Server Status", "Server listen success")
-                                 print("Server " .. tostring(srv) .. " chose endpoint " .. endpoint.ip .. ":" .. endpoint.port .. ", listening on " .. addr.ip .. ":" .. addr.port)
+                                 Dbg:Debug("Server " .. tostring(srv) .. " chose endpoint " .. endpoint.ip .. ":" .. endpoint.port .. ", listening on " .. addr.ip .. ":" .. addr.port)
                                  if (not calledDone) then
                                         calledDone = true
                                         done(true, addr)
@@ -87,7 +87,7 @@ local server = {
                           function(srv, code, msg, op)
                                  -- code is the system error code (as a number)
                                  -- msg is the error message as a string
-                                 print("Server " .. tostring(srv) .. " Error " .. code .. " (" .. msg .. ")")
+                                 Dbg:Debug("Server " .. tostring(srv) .. " Error " .. code .. " (" .. msg .. ")")
 						   C4:UpdateProperty("Server Status", "Server error")
                                  if (not calledDone) then
                                         calledDone = true
@@ -100,7 +100,7 @@ local server = {
                                  -- srv is the instance C4:CreateTCPServer() returned
                                  -- client is a C4LuaTcpClient instance of the new connection that was just accepted
                                  C4:UpdateProperty("Server Status", "A client accept success")
-						   print("Connection on server " .. tostring(srv) .. " accepted, client: " .. tostring(client))
+						   Dbg:Debug("Connection on server " .. tostring(srv) .. " accepted, client: " .. tostring(client))
 						   client:ReadUntil(string.char(0xEA))
                                  if (self.clientsCnt >= maxClients) then
                                         client:Write(""):Close(true)
@@ -122,12 +122,6 @@ local server = {
 											 if data then
 												hexdump(data, function(s) Dbg:Debug("server control:------>" .. s) end)
 												self:broadcast(cli , data)
-												cli:ReadUntil(string.char(0xEA))
-											 end
-										  elseif pack.cmd == CMD_HUMIDITY then --获取环境设备数据 
-											 for _,v in ipairs(device:envData()) do
-												hexdump(v, function(s) Dbg:Debug("server state:------>" .. s) end)
-												self:broadcast(cli , v)
 												cli:ReadUntil(string.char(0xEA))
 											 end
 										  elseif pack.cmd == CMD_SCENE then
@@ -185,6 +179,22 @@ local server = {
 												hexdump(data, function(s) Dbg:Debug("server:------>" .. s) end)
 												cli:Write(data):ReadUntil(string.char(0xEA))
 											 end
+										  elseif pack.cmd == CMD_SCHEDULE then
+											 local http = Http:create()
+											 if pack.state == CMD_ON then
+												local fileName = ""
+												if pack.deviceType == SCENE_SCHEDULE then
+												    fileName = "%s_%d.plist"
+												elseif pack.deviceType == DEVICE_SCHEDULE then
+												    fileName = "schedule_%s_%d.plist"
+												end
+												local path = string.format(fileName,pack.masterID,pack.deviceID)
+												local ticketId = http:prepareDownload(path,pack.deviceID,pack.deviceType)
+												table.insert(gTicketIdMap, ticketId, http)
+											 elseif pack.state == CMD_OFF then
+												local sch = scheduleMap[tostring(pack.deviceID)]
+												sch:stop()
+											 end
 										  end
 										  
                                                end
@@ -193,7 +203,7 @@ local server = {
                                                function(cli)
                                                       -- cli is the C4LuaTcpClient instance (same as client in the OnAccept handler).  This callback is called when
                                                       -- all data was sent.
-                                                      print("Server " .. tostring(srv) .. " Client " .. tostring(client) .. " Data was sent.")
+                                                      Dbg:Debug("Server " .. tostring(srv) .. " Client " .. tostring(client) .. " Data was sent.")
                                                end
                                         )
                                         :OnDisconnect(
@@ -202,9 +212,9 @@ local server = {
                                                       -- errCode is the system error code (as a number).  On a graceful disconnect, this value is 0.
                                                       -- errMsg is the error message as a string.
                                                       if (errCode == 0) then
-                                                             print("Server " .. tostring(srv) .. " Client " .. tostring(client) .. " Disconnected gracefully.")
+                                                             Dbg:Debug("Server " .. tostring(srv) .. " Client " .. tostring(client) .. " Disconnected gracefully.")
                                                       else
-                                                             print("Server " .. tostring(srv) .. " Client " .. tostring(client) .. " Disconnected with error " .. errCode .. " (" .. errMsg .. ")")
+                                                             Dbg:Debug("Server " .. tostring(srv) .. " Client " .. tostring(client) .. " Disconnected with error " .. errCode .. " (" .. errMsg .. ")")
                                                       end
                                                       self.clients[cli] = nil
                                                       self.clientsCnt = self.clientsCnt - 1
@@ -216,7 +226,7 @@ local server = {
                                                       -- code is the system error code (as a number)
                                                       -- msg is the error message as a string
                                                       -- op indicates what type of operation failed: "read", "write"
-                                                      print("Server " .. tostring(srv) .. " Client " .. tostring(client) .. " Error " .. code .. " (" .. msg .. ") on " .. op)
+                                                      Dbg:Debug("Server " .. tostring(srv) .. " Client " .. tostring(client) .. " Error " .. code .. " (" .. msg .. ") on " .. op)
                                                end
                                         )
                                         :Write("")
@@ -234,9 +244,9 @@ local server = {
 function tcpServer()
     server:start(10, "*", SERVER_PORT, function(success, info)
 		if (success) then
-			  print("Server listening on " .. info.ip .. ":" .. info.port)
+			  Dbg:Debug("Server listening on " .. info.ip .. ":" .. info.port)
 		else
-			  print("Could not start server: " .. info)
+			  Dbg:Debug("Could not start server: " .. info)
 		end
     end)
     return server

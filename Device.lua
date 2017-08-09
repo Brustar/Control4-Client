@@ -36,6 +36,12 @@ CMD_VOLUME_DOWN = 0x03
 CMD_MUTE_TOGGLE = 0x04
 CMD_SET_VOLUME_LEVEL = 0xAA
 
+CMD_SCHEDULE = 0x8A
+CMD_SCHEDULE_RESET = 0x8C
+
+SCENE_SCHEDULE = 0x60
+DEVICE_SCHEDULE = 0x61
+
 VAR_TEMPERATURE_C = 1131
 VAR_HUMIDITY = 1138
 
@@ -220,7 +226,7 @@ function Device:create(data)
 		  for _,id in ipairs(ids) do
 			 idDevice = tonumber(id)
 			 --湿度
-			 pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_HUMIDITY,tonumber(C4:GetVariable(idDevice, VAR_HUMIDITY)),0,0,idDevice)
+			 pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),PACK_HUMIDITY,tonumber(C4:GetVariable(idDevice, VAR_HUMIDITY)),0,0,idDevice)
 			 data = pack:hex()
 			 table.insert(ret,data)
 			 --温度
