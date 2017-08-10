@@ -9,6 +9,7 @@ CMD_SCENE = 0x89
 
 PACK_HUMIDITY = 0x8A
 CMD_QUERY = 0x9A
+CMD_RESET_SCHEDULE = 0x8C
 
 function Pack:create(cmd,masterID,state,r,g,b,deviceID,deviceType)
     local pack = {}

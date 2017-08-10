@@ -301,6 +301,8 @@ function OnConnectionStatusChanged(idBinding, nPort, strStatus)
 	   if (idBinding == SUB_SOCKET_BINDINGID) then
 		  local pack = Pack:create(SUB_AUTHOR,tonumber(Properties["masterID"]))
 		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), pack:hex())
+		  pack = Pack:create(CMD_RESET_SCHEDULE,tonumber(Properties["masterID"])
+		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), pack:hex())
 	   end
 	   
 	   if (nPort == UDP_PORT) then
