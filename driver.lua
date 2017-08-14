@@ -287,6 +287,7 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	    elseif pack.state == CMD_OFF then
 	    	local sch = scheduleMap[tostring(pack.deviceID)]
 	    	if sch then
+	    		scheduleMap[tostring(pack.deviceID)] = nil
 	    		sch:stop()
 	    	end
     	end
