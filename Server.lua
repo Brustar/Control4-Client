@@ -193,7 +193,9 @@ local server = {
 												table.insert(gTicketIdMap, ticketId, http)
 											 elseif pack.state == CMD_OFF then
 												local sch = scheduleMap[tostring(pack.deviceID)]
-												sch:stop()
+                        if sch then
+												  sch:stop()
+                        end
 											 end
 										  end
 										  

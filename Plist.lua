@@ -131,7 +131,8 @@ end
 
 function Plist.parseToTable(fileName)
     local data = File.read(fileName)
-    return Plist.plistParse(data:gsub("<(false)%s?/>","<integer>0</integer>"):gsub("<(true)%s?/>","<integer>1</integer>"):gsub("<(%w+)%s?/>","<%1></%1>"))
+    data = data:gsub("<(false)%s?/>","<integer>0</integer>"):gsub("<(true)%s?/>","<integer>1</integer>"):gsub("<(%w+)%s?/>","<%1></%1>")
+    return Plist.plistParse(data)
 end
 
 function Plist.parseSchedule(fileName)

@@ -15,7 +15,7 @@ function File.write(path,data)
     end
 
     local numWritten = C4:FileWriteString(fh, data)
-    print("Bytes written :" .. numWritten)
+    Dbg:Debug("Bytes written :" .. numWritten)
     C4:FileClose(fh)
 end
 

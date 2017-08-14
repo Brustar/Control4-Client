@@ -1,7 +1,6 @@
 Scene = {}
 
 function Scene.start(data)
-	print("start::::")
     for i,v in ipairs(data.devices) do
 
 	   local deviceid = tonumber(v.enumber,16)
