@@ -50,7 +50,7 @@ function Scene.start(data)
     end
 end
 
-function Scene.stop()
+function Scene.stop(data)
 	for i,v in ipairs(data.devices) do
 		local deviceid = tonumber(v.enumber,16)
 		C4:SendToDevice(deviceid,"OFF",{})

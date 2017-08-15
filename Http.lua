@@ -60,9 +60,10 @@ function Http:create()
     function http:startSchedule()
     	local schData = Plist.parseSchedule(self.fileName)
   		if schData then
-	  		local obj = {isDevice = self.deviceType == DEVICE_SCHEDULE,deviceID = self.sceneID,sceneData = Plist.parseToTable(self.fileName),schData = schData}
-	  		local sch = Scheduler:create(obj)
-	  		sch:start(schData.weekDays)
+	  		local isDevice = self.deviceType == DEVICE_SCHEDULE
+	  		local sceneData = Plist.parseToTable(self.fileName)
+	  		local sch = Scheduler:create()
+	  		sch:start(isDevice,sceneData,schData)
 	  		table.insert(scheduleMap,self.sceneID,sch)
 	  	end
     end

@@ -1,62 +1,57 @@
 Scheduler = {}
 
-function Scheduler:create(obj)
+function Scheduler:create()
 
 	local scheduler = {}
 	
 	self.timer = nil
 
-	self.startime = parseTime(obj.schData.startTime)
-	self.isDevice = obj.isDevice
-	if self.isDevice then
-		self.interval = obj.schData.interval
-		self.deviceID = obj.schData.deviceID
-	else
-		self.endtime = parseTime(obj.schData.endTime)
-		self.sceneData = obj.sceneData
-    end
-
-	function scheduler:start(weekDays)
-		weekDays = weekDays or {}
+	function scheduler:start(isDevice,sceneData,schData)
+		local startime = parseTime(schData.startTime)
+		local endtime = parseTime(schData.endTime)
+		local weekDays = weekDays or {}
 		self.timer = C4:SetTimer(60 * 1000, function(timer, skips)
 			 local wday = os.date("%w")
 			 for _,v in ipairs(weekDays) do
 			 	if v == wday then
-			 		self:execute()
+			 		self:execute(isDevice,sceneData,schData)
 			 	end
 			 end
 
 			 if self.isDevice or #weekDays == 0 then
-			 	self:execute()
+			 	self:execute(isDevice,sceneData,schData)
 			 end
 			 
 		end,true)
 	end
 
-	function scheduler:execute()
+	function scheduler:execute(isDevice,sceneData,schData)
+		local startime = parseTime(schData.startTime)
+		local endtime = parseTime(schData.endTime)
+
 		local now = os.date("*t")
 		local year = now.year
 		local month = now.month
 		local day = now.day
 
 		local sysMin = os.time() - os.time() % 60
-		local startMin = os.time{year = year,month = month, day = day, hour = self.startime.hour , min = self.startime.min}
-		local endMin = os.time{year = year,month = month, day = day, hour = self.endtime.hour , min = self.endtime.min}
+		local startMin = os.time{year = year,month = month, day = day, hour = startime.hour , min = startime.min}
+		local endMin = os.time{year = year,month = month, day = day, hour = endtime.hour , min = endtime.min}
 		if sysMin == startMin then
-		  if self.isDevice then
-			 C4:SendToDevice(self.deviceID,"ON",{})
-			 C4:SetTimer(self.interval, function(timer, skips)
-				C4:SendToDevice(self.deviceID,"OFF",{})
+		  if isDevice then
+			 C4:SendToDevice(sceneData.deviceID,"ON",{})
+			 C4:SetTimer(sceneData.interval, function(timer, skips)
+				C4:SendToDevice(sceneData.deviceID,"OFF",{})
 				timer:Cancel()
 			 end)
-		  else 
-			 Scene.start(self.sceneData)
+		  else
+			 Scene.start(sceneData)
 		  end
 		end
 
-		if not self.isDevice then
+		if not isDevice then
 			if sysMin == endMin then
-			 	Scene.stop(self.sceneData)
+			 	Scene.stop(sceneData)
 			end
 		end
 	end
