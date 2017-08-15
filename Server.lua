@@ -108,7 +108,7 @@ local server = {
                                   end
                                  local info = {}
                                  client:OnRead(
-                                              function(cli, strData)
+								    function(cli, strData)
 										  hexdump(strData, function(s) Dbg:Debug("server:<------ " .. s) end)
 										  local pack = Pack.decode(strData)
 										  local device = Device:create(pack)
@@ -122,45 +122,38 @@ local server = {
 											 if data then
 												hexdump(data, function(s) Dbg:Debug("server control:------>" .. s) end)
 												self:broadcast(cli , data)
-												cli:ReadUntil(string.char(0xEA))
 											 end
 										  elseif pack.cmd == CMD_SCENE then
 											 C4:SetVariable("SCENE_ID", tostring(pack.deviceID))
 											 C4:FireEvent("tcp event")
 											 data = pack:hex()
 											 self:broadcast(cli , data)
-											 cli:ReadUntil(string.char(0xEA))
 										  elseif pack.cmd == CMD_QUERY then
 											 data = device:deviceState(tostring(pack.deviceID),pack.deviceType)
 											 if data then
 												hexdump(data, function(s) Dbg:Debug("server:------>" .. s) end)
 												self:broadcast(cli , data)
-												cli:ReadUntil(string.char(0xEA))
 											 end
 											 if pack.deviceType == device.LIGHT then
 												data = device:deviceLevel(tostring(pack.deviceID),pack.deviceType)
 												hexdump(data, function(s) Dbg:Debug("server:------>" .. s) end)
 												self:broadcast(cli , data)
-												cli:ReadUntil(string.char(0xEA))
 											 end
 											 
 											 if pack.deviceType == device.AIRCONDITION then
 												for _,v in ipairs(device:envData()) do
 												    self:broadcast(cli , v)
 												end
-												cli:ReadUntil(string.char(0xEA))
 											 end
 											 
 											 if pack.deviceType == device.TV or pack.deviceType == device.DVD or pack.deviceType == device.BGMUSIC then
 												data = device:volume(tostring(pack.deviceID),pack.deviceType)
 												self:broadcast(cli , data)
-												cli:ReadUntil(string.char(0xEA))
 											 end
 											 
 											 if pack.deviceType == device.BGMUSIC then
 												data = device:isPlaying(pack.deviceID,pack.deviceType)
 												self:broadcast(cli , data)
-												cli:ReadUntil(string.char(0xEA))
 											 end
 										  elseif pack.cmd == MASTER_AUTH then
 											 if pack.masterID == tonumber(Properties["masterID"]) then
@@ -171,13 +164,13 @@ local server = {
 												data = Pack:create(pack.cmd,pack.masterID,0x40):hex()
 											 end
 											 hexdump(data, function(s) Dbg:Debug("server:------>" .. s) end)
-											 cli:Write(data):ReadUntil(string.char(0xEA))
+											 cli:Write(data)
 										  elseif pack.cmd == MASTER_BEAT then
 											 if pack.masterID == tonumber(Properties["masterID"]) then
 												data = Pack:create(MASTER_BEAT_ANSWER,pack.masterID):hex()
 											 
 												hexdump(data, function(s) Dbg:Debug("server:------>" .. s) end)
-												cli:Write(data):ReadUntil(string.char(0xEA))
+												cli:Write(data)
 											 end
 										  elseif pack.cmd == CMD_SCHEDULE then
 											 local http = Http:create()
@@ -193,14 +186,14 @@ local server = {
 												table.insert(gTicketIdMap, ticketId, http)
 											 elseif pack.state == CMD_OFF then
 												local sch = scheduleMap[tostring(pack.deviceID)]
-                        if sch then
-                          scheduleMap[tostring(pack.deviceID)] = nil
-												  sch:stop()
-                        end
+												if sch then
+												    scheduleMap[tostring(pack.deviceID)] = nil
+												    sch:stop()
+												end
 											 end
 										  end
-										  
-                                               end
+										  cli:ReadUntil(string.char(0xEA))
+								    end
                                         )
                                         :OnWrite(
                                                function(cli)

@@ -272,26 +272,26 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	   end
 	end
 
-	if pack.cmd == CMD_SCHEDULE then
-		local http = Http:create()
-		if pack.state == CMD_ON then
-			local fileName = ""
-			if pack.deviceType == SCENE_SCHEDULE then
-				fileName = "%s_%d.plist"
-			elseif pack.deviceType == DEVICE_SCHEDULE then
-				fileName = "schedule_%s_%d.plist"
-			end
-	    	local path = string.format(fileName,pack.masterID,pack.deviceID)
-	    	local ticketId = http:prepareDownload(path,pack.deviceID,pack.deviceType)
-	    	table.insert(gTicketIdMap, ticketId, http)
-	    elseif pack.state == CMD_OFF then
-	    	local sch = scheduleMap[tostring(pack.deviceID)]
-	    	if sch then
-	    		scheduleMap[tostring(pack.deviceID)] = nil
-	    		sch:stop()
-	    	end
-    	end
-	end
+    if pack.cmd == CMD_SCHEDULE then
+	   local http = Http:create()
+	   if pack.state == CMD_ON then
+		  local fileName = ""
+		  if pack.deviceType == SCENE_SCHEDULE then
+			 fileName = "%s_%d.plist"
+		  elseif pack.deviceType == DEVICE_SCHEDULE then
+			 fileName = "schedule_%s_%d.plist"
+		  end
+		  local path = string.format(fileName,pack.masterID,pack.deviceID)
+		  local ticketId = http:prepareDownload(path,pack.deviceID,pack.deviceType)
+		  table.insert(gTicketIdMap, ticketId, http)
+	   elseif pack.state == CMD_OFF then
+		  local sch = scheduleMap[tostring(pack.deviceID)]
+		  if sch then
+			 scheduleMap[tostring(pack.deviceID)] = nil
+			 sch:stop()
+		  end
+	   end
+    end
 end
 
 function OnConnectionStatusChanged(idBinding, nPort, strStatus)

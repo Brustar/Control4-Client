@@ -1,11 +1,13 @@
 Scene = {}
 
 function Scene.start(data)
+    print("length:",#data.devices)
     for i,v in ipairs(data.devices) do
 
 	   local deviceid = tonumber(v.enumber,16)
 	   --switch
 	   if v.isPoweron == 1 or v.poweron == 1 or v.swithon == 1 or v.unlock == 1 or v.pushing == 1 or v.showed == 1 or v.waiting == 1 then
+		  print("on:",deviceid)
 		  C4:SendToDevice(deviceid,"ON",{})
 	   end
 	   
