@@ -3,24 +3,24 @@ Scene = {}
 function Scene.start(data)
     print("length:",#data.devices)
     for i,v in ipairs(data.devices) do
-
 	   local deviceid = tonumber(v.enumber,16)
+	   local deviceType = tonumber(v.htype,16)
 	   --switch
 	   if v.isPoweron == 1 or v.poweron == 1 or v.swithon == 1 or v.unlock == 1 or v.pushing == 1 or v.showed == 1 or v.waiting == 1 then
 		  print("on:",deviceid)
 		  local device = Device:create()
-		  if v.htype == device.BGMUSIC then
+		  if deviceType == device.BGMUSIC then
 			 device:bgMusicON(deviceid,C4:RoomGetId())
-		  elseif v.htype == device.AMPLIFIER then
-			 self:switchAmplifier(deviceid,true)
+		  elseif deviceType == device.AMPLIFIER then
+			 device:switchAmplifier(deviceid,v.waiting)
 		  else
 			 C4:SendToDevice(deviceid,"ON",{})
 		  end
 	   end
 	   
 	   if v.isPoweron == 0 or v.poweron == 0 or v.swithon == 0 or v.pushing == 0 or v.showed == 0 or v.waiting == 0 then
-		  if v.htype == device.AMPLIFIER then
-			 self:switchAmplifier(deviceid,false)
+		  if deviceType == device.AMPLIFIER then
+			 device:switchAmplifier(deviceid,v.waiting)
 		  else
 			 C4:SendToDevice(deviceid,"OFF",{})
 		  end
