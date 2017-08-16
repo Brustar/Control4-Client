@@ -8,11 +8,22 @@ function Scene.start(data)
 	   --switch
 	   if v.isPoweron == 1 or v.poweron == 1 or v.swithon == 1 or v.unlock == 1 or v.pushing == 1 or v.showed == 1 or v.waiting == 1 then
 		  print("on:",deviceid)
-		  C4:SendToDevice(deviceid,"ON",{})
+		  local device = Device:create()
+		  if v.htype == device.BGMUSIC then
+			 device:bgMusicON(deviceid,C4:RoomGetId())
+		  elseif v.htype == device.AMPLIFIER then
+			 self:switchAmplifier(deviceid,true)
+		  else
+			 C4:SendToDevice(deviceid,"ON",{})
+		  end
 	   end
 	   
 	   if v.isPoweron == 0 or v.poweron == 0 or v.swithon == 0 or v.pushing == 0 or v.showed == 0 or v.waiting == 0 then
-		  C4:SendToDevice(deviceid,"OFF",{})
+		  if v.htype == device.AMPLIFIER then
+			 self:switchAmplifier(deviceid,false)
+		  else
+			 C4:SendToDevice(deviceid,"OFF",{})
+		  end
 	   end
 	   
 	   --light

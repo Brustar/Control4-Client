@@ -172,11 +172,7 @@ function Device:create(data)
 	   elseif pack.deviceType == self.BGMUSIC then
 		  --此驱动必须和my music在同一房间
 		  if pack.state == CMD_PLAY or pack.state == CMD_ON then
-		  	if self:hasSong(C4:RoomGetId())>0 then
-		  		C4:SendToDevice(C4:RoomGetId(),"PLAY",{})
-		  	else
-			 	self:playSong(pack.deviceID,C4:RoomGetId())
-			end
+			 self:bgMusicON(pack.deviceID,C4:RoomGetId())
 		  elseif pack.state == CMD_SKIP_REV then
 			 C4:SendToDevice(C4:RoomGetId(),"SKIP_REV",{})
 		  elseif pack.state == CMD_PAUSE then
@@ -196,13 +192,7 @@ function Device:create(data)
 		  
 	   elseif pack.deviceType == self.LOCK then
 	   elseif pack.deviceType == self.AMPLIFIER then
-		  local irCodeID = 12
-		  if pack.state == CMD_ON then
-			 C4:SendToDevice(pack.deviceID,"EMIT_CODE",{ID = irCodeID})
-		  elseif pack.state == CMD_OFF then
-			 irCodeID = 102
-			 C4:SendToDevice(pack.deviceID,"EMIT_CODE",{ID = irCodeID})
-		  end
+		  self:switchAmplifier(pack.deviceID,pack.state)
 	   else
 		  return nil
 	   end
@@ -277,10 +267,28 @@ function Device:create(data)
 	   end
 	   return 0
     end
-
+    
+    function device:switchAmplifier(deviceID,state)
+	   local irCodeID = 12
+	   if state == CMD_ON then
+		  C4:SendToDevice(deviceID,"EMIT_CODE",{ID = irCodeID})
+	   elseif state == CMD_OFF then
+		  irCodeID = 102
+		  C4:SendToDevice(deviceID,"EMIT_CODE",{ID = irCodeID})
+	   end
+    end
+    
+    function device:bgMusicON(deviceID,roomId)
+	   if self:hasSong(roomId)>0 then
+		  C4:SendToDevice(roomId,"PLAY",{})
+	   else
+		  self:playSong(deviceID,roomId)
+	   end
+    end
+    
     function device:playSong(deviceID,roomId)
-    	local param = {["type"] = "PLAYLIST",idMedia = 1,idRoom = roomId,volume = 35,shuffle = 1,["repeat"] = 0}
-		C4:SendToDevice(deviceID,"DEVICE_SELECTED",param)
+	   local param = {["type"] = "PLAYLIST",idMedia = 1,idRoom = roomId,volume = 35,shuffle = 1,["repeat"] = 0}
+	   C4:SendToDevice(deviceID,"DEVICE_SELECTED",param)
     end
 
     function device:hasSong(roomId)
