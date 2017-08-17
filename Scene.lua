@@ -74,7 +74,7 @@ function Scene.stop(data)
 	   if deviceType == device.BGMUSIC then
 		  C4:SendToDevice(C4:RoomGetId(),"STOP",{})
 	   elseif deviceType == device.AMPLIFIER then
-		  device:switchAmplifier(deviceid,v.waiting)
+		  device:switchAmplifier(deviceid,0)
 	   else
 		  C4:SendToDevice(deviceid,"OFF",{})
 	   end
