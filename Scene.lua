@@ -2,7 +2,7 @@ Scene = {}
 
 function Scene.start(data)
     print("length:",#data.devices)
-    for i,v in ipairs(data.devices) do
+    for _,v in ipairs(data.devices) do
 	   local deviceid = tonumber(v.enumber,16)
 	   local deviceType = tonumber(v.htype,16)
 	   local device = Device:create()
@@ -67,8 +67,16 @@ function Scene.start(data)
 end
 
 function Scene.stop(data)
-	for i,v in ipairs(data.devices) do
-		local deviceid = tonumber(v.enumber,16)
-		C4:SendToDevice(deviceid,"OFF",{})
-	end
+    for _,v in ipairs(data.devices) do
+	   local deviceid = tonumber(v.enumber,16)
+	   local deviceType = tonumber(v.htype,16)
+	   local device = Device:create()
+	   if deviceType == device.BGMUSIC then
+		  C4:SendToDevice(C4:RoomGetId(),"STOP",{})
+	   elseif deviceType == device.AMPLIFIER then
+		  device:switchAmplifier(deviceid,v.waiting)
+	   else
+		  C4:SendToDevice(deviceid,"OFF",{})
+	   end
+    end
 end
