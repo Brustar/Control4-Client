@@ -10,11 +10,15 @@ function Sqlite:create()
     end
     
     function sqlite:createTable(sql)
-	   return self.conn:execute(sql)
+	   local row = self.conn:execute(sql)
+	   self.conn:close()
+	   return row
     end
     
     function sqlite:save(sql)
-	   return self.conn:execute(sql)
+	   local row = self.conn:execute(sql)
+	   self.conn:close()
+	   return row
     end
     
     function sqlite:query(sql,num)
@@ -29,6 +33,7 @@ function Sqlite:create()
 		  end
 		  table.insert(ret,item)
 	   end
+	   rs:close()
 	   return ret
     end
 

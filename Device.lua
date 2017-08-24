@@ -39,6 +39,9 @@ CMD_SET_VOLUME_LEVEL = 0xAA
 CMD_SCHEDULE = 0x8A
 CMD_SCHEDULE_RESET = 0x8C
 
+CMD_SHUFFLE = 0x46
+CMD_REPEAT = 0x45
+
 SCENE_SCHEDULE = 0x60
 DEVICE_SCHEDULE = 0x61
 
@@ -52,6 +55,8 @@ CURRENT_VOLUME = 1011
 AMPLIFIER_ID = 329
 
 CURRENT_MEDIA = 1031
+
+PM25 = 1145  --C4:GetVariable(375,1145)
 
 function Device:create(data)
 
@@ -184,7 +189,9 @@ function Device:create(data)
 		  elseif pack.state == CMD_SET_VOLUME_LEVEL then
 			 C4:SendToDevice(C4:RoomGetId(),"SET_VOLUME_LEVEL",{LEVEL = pack.r/2})
 		  elseif pack.state == CMD_SHUFFLE then
-			 C4:SendToDevice(pack.deviceID,"SET_SHUFFLE",{})
+			 C4:SendToDevice(C4:RoomGetId(),"SET_SHUFFLE",{})
+		  elseif pack.state == CMD_REPEAT then
+			 C4:SendToDevice(C4:RoomGetId(),"SET_REPEAT",{})
 		  end
 	   elseif pack.deviceType == self.PROJECTOR then
 	   elseif pack.deviceType == self.SCREEN then
