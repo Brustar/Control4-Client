@@ -189,9 +189,9 @@ function Device:create(data)
 		  elseif pack.state == CMD_SET_VOLUME_LEVEL then
 			 C4:SendToDevice(C4:RoomGetId(),"SET_VOLUME_LEVEL",{LEVEL = pack.r/2})
 		  elseif pack.state == CMD_SHUFFLE then
-			 C4:SendToDevice(pack.deviceID+1,"ToggleShuffle",{ROOMID = C4:RoomGetId()})
+			 C4:SendToDevice(pack.deviceID,"ToggleShuffle",{ROOMID = C4:RoomGetId()})
 		  elseif pack.state == CMD_REPEAT then
-			 C4:SendToDevice(pack.deviceID+1,"ToggleRepeat",{ROOMID = C4:RoomGetId()})
+			 C4:SendToDevice(pack.deviceID,"ToggleRepeat",{ROOMID = C4:RoomGetId()})
 		  end
 	   elseif pack.deviceType == self.PROJECTOR then
 	   elseif pack.deviceType == self.SCREEN then
@@ -295,7 +295,7 @@ function Device:create(data)
     
     function device:playSong(deviceID,roomId)
 	   local param = {["type"] = "PLAYLIST",idMedia = 1,idRoom = roomId,volume = 35,shuffle = 1,["repeat"] = 0}
-	   C4:SendToDevice(deviceID,"DEVICE_SELECTED",param)
+	   C4:SendToDevice(deviceID-1,"DEVICE_SELECTED",param)
     end
 
     function device:hasSong(roomId)
