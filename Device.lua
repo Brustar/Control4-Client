@@ -294,7 +294,7 @@ function Device:create(data)
     end
     
     function device:playSong(deviceID,roomId)
-	   local param = {["type"] = "PLAYLIST",idMedia = 1,idRoom = roomId,volume = 35,shuffle = 1,["repeat"] = 0}
+	   local param = {["type"] = "PLAYLIST",idMedia = 1,idRoom = roomId,volume = 35,shuffle = 0,["repeat"] = 0}
 	   C4:SendToDevice(deviceID-1,"DEVICE_SELECTED",param)
     end
 
@@ -306,7 +306,7 @@ function Device:create(data)
 
     function device:isPlaying(deviceID,deviceType)
 	   local playing = 0
-	   if C4:GetVariable(deviceID,VAR_LEVEL) == "PLAY" then
+	   if C4:GetVariable(deviceID-1,VAR_LEVEL) == "PLAY" then
 		  playing = 1
 	   end
 	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),playing,0,0,0,deviceID,deviceType)
