@@ -189,9 +189,9 @@ function Device:create(data)
 		  elseif pack.state == CMD_SET_VOLUME_LEVEL then
 			 C4:SendToDevice(C4:RoomGetId(),"SET_VOLUME_LEVEL",{LEVEL = pack.r/2})
 		  elseif pack.state == CMD_SHUFFLE then
-			 C4:SendToDevice(C4:RoomGetId(),"SET_SHUFFLE",{})
+			 C4:SendToDevice(pack.deviceID+1,"ToggleShuffle",{ROOMID = C4:RoomGetId()})
 		  elseif pack.state == CMD_REPEAT then
-			 C4:SendToDevice(C4:RoomGetId(),"SET_REPEAT",{})
+			 C4:SendToDevice(pack.deviceID+1,"ToggleRepeat",{ROOMID = C4:RoomGetId()})
 		  end
 	   elseif pack.deviceType == self.PROJECTOR then
 	   elseif pack.deviceType == self.SCREEN then
