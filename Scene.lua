@@ -7,7 +7,7 @@ function Scene.start(data)
 	   local deviceType = tonumber(v.htype,16)
 	   local device = Device:create()
 	   --switch
-	   if v.isPoweron == 1 or v.poweron == 1 or v.swithon == 1 or v.unlock == 1 or v.pushing == 1 or v.showed == 1 or v.waiting == 1 or v.openvalue > 0 then
+	   if v.isPoweron == 1 or v.poweron == 1 or v.swithon == 1 or v.unlock == 1 or v.pushing == 1 or v.showed == 1 or v.waiting == 1 or (v.openvalue and v.openvalue > 0) then
 		  print("on:",deviceid)
 		  if deviceType == device.BGMUSIC then
 			 device:bgMusicON(deviceid,C4:RoomGetId())
@@ -32,11 +32,13 @@ function Scene.start(data)
 	   end
 	   
 	   --light
-	   if v.brightness then
+	   if v.deviceType == 2 or v.deviceType==3 then
+	   	if v.brightness then
 		  C4:SendToDevice(deviceid,"RAMP_TO_LEVEL", {LEVEL = v.brightness, TIME = 1000})
+		end
 	   end
 	   
-	   if v.color and #v.color>0 then
+	   if v.deviceType==3 and v.color and #v.color>0 then
 		  C4:SendToDevice(deviceid,"SET_BUTTON_COLOR", {ON_COLOR = string.format("%2x%2x%2x",v.color[1],v.color[2],v.color[3])})
 	   end
 	   
