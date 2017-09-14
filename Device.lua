@@ -18,6 +18,8 @@ CMD_HIGH = 0x35
 CMD_MIDDLE = 0x36
 CMD_LOW = 0x37
 
+CMD_WIND = 0x41
+
 CMD_SCAN_REV = 0x16
 CMD_PLAY = 0x12
 CMD_SCAN_FWD = 0x15
@@ -118,8 +120,8 @@ function Device:create(data)
 			 C4:SendToDevice(pack.deviceID, "FRESH_OFF", {})
 		  elseif pack.state == CMD_COOL then
 			 C4:SendToDevice(pack.deviceID, "FRESH_COOL", {})
-		  elseif pack.state == CMD_FAN then
-			 C4:SendToDevice(pack.deviceID, "FRESH_FAN", {})
+		  elseif pack.state == CMD_WIND then
+			 C4:SendToDevice(pack.deviceID, "FRESH_WIND", {})
 		  elseif pack.state == CMD_HIGH then
 			 C4:SendToDevice(pack.deviceID, "FRESH_HIGH", {})
 		  elseif pack.state == CMD_MIDDLE then
