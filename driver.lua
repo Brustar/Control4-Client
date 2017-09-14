@@ -270,6 +270,11 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 		  data = device:isPlaying(pack.deviceID,pack.deviceType)
 		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
 	   end
+
+	   if pack.deviceType == device.PM25 then
+	   		data = device:PM25(pack.deviceID,pack.deviceType)
+		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
+	   end
 	end
 
     if pack.cmd == CMD_SCHEDULE then

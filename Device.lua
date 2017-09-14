@@ -14,6 +14,9 @@ CMD_COOL = 0x3A
 CMD_DRY = 0x3B
 CMD_FAN = 0x3C
 CMD_TEMPRETURE = 0x6A
+CMD_HIGH = 0x35
+CMD_MIDDLE = 0x36
+CMD_LOW = 0x37
 
 CMD_SCAN_REV = 0x16
 CMD_PLAY = 0x12
@@ -35,6 +38,7 @@ CMD_VOLUME_DOWN = 0x03
 
 CMD_MUTE_TOGGLE = 0x04
 CMD_SET_VOLUME_LEVEL = 0xAA
+CMD_PM25 = 0x7A
 
 CMD_SCHEDULE = 0x8A
 CMD_SCHEDULE_RESET = 0x8C
@@ -65,6 +69,7 @@ function Device:create(data)
     
     device.LIGHT=0x02
     device.BLIND = 0x21
+    device.FRESHAIR = 0X30
     device.AIRCONDITION = 0x31
     
     device.TV = 0x12
@@ -90,21 +95,37 @@ function Device:create(data)
 		  end
 	   elseif pack.deviceType == self.AIRCONDITION then	--空调
 		  if pack.state == CMD_ON then
-			 C4:SendToDevice(pack.deviceID, "ON", {})
+			 C4:SendToDevice(pack.deviceID, "ON", {addr = pack.b})
 		  elseif pack.state == CMD_OFF then
-			 C4:SendToDevice(pack.deviceID, "OFF", {})
+			 C4:SendToDevice(pack.deviceID, "OFF", {addr = pack.b})
 		  elseif pack.state == CMD_HEAT then
-			 C4:SendToDevice(pack.deviceID, "HEAT", {})
+			 C4:SendToDevice(pack.deviceID, "HEAT", {addr = pack.b})
 		  elseif pack.state == CMD_COOL then
-			 C4:SendToDevice(pack.deviceID, "COOL", {})
+			 C4:SendToDevice(pack.deviceID, "COOL", {addr = pack.b})
 		  elseif pack.state == CMD_DRY then
-			 C4:SendToDevice(pack.deviceID, "DRY", {})
+			 C4:SendToDevice(pack.deviceID, "DRY", {addr = pack.b})
 		  elseif pack.state == CMD_FAN then
-			 C4:SendToDevice(pack.deviceID, "FAN", {})
+			 C4:SendToDevice(pack.deviceID, "FAN", {addr = pack.b})
 		  elseif pack.state == CMD_TEMPRETURE then
 			 if pack.r<30 and pack.r>15 then
-				C4:SendToDevice(pack.deviceID, "TEMPTURE", {degree = pack.r})
+				C4:SendToDevice(pack.deviceID, "TEMPTURE", {degree = pack.r,addr = pack.b})
 			 end
+		  end
+		elseif pack.deviceType == self.FRESHAIR then
+		  if pack.state == CMD_ON then
+			 C4:SendToDevice(pack.deviceID, "FRESH_ON", {})
+		  elseif pack.state == CMD_OFF then
+			 C4:SendToDevice(pack.deviceID, "FRESH_OFF", {})
+		  elseif pack.state == CMD_COOL then
+			 C4:SendToDevice(pack.deviceID, "FRESH_COOL", {})
+		  elseif pack.state == CMD_FAN then
+			 C4:SendToDevice(pack.deviceID, "FRESH_FAN", {})
+		  elseif pack.state == CMD_HIGH then
+			 C4:SendToDevice(pack.deviceID, "FRESH_HIGH", {})
+		  elseif pack.state == CMD_MIDDLE then
+			 C4:SendToDevice(pack.deviceID, "FRESH_MIDDLE", {})
+		  elseif pack.state == CMD_LOW then
+			 C4:SendToDevice(pack.deviceID, "FRESH_LOW", {})
 		  end
 	   elseif pack.deviceType == self.BLIND or pack.deviceType == self.BLIND + 1 then
 		  if pack.state == CMD_STOP then
@@ -260,6 +281,13 @@ function Device:create(data)
 	   local variable = tonumber(C4:GetVariable(C4:RoomGetId(), CURRENT_VOLUME))
 	   if variable < 0 then variable = 0 end
 	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_SET_VOLUME_LEVEL,variable,0,0,deviceID,deviceType)
+	   return pack:hex()
+    end
+
+    function device:PM25(deviceID,deviceType)
+    	local variable = tonumber(C4:GetVariable(C4:RoomGetId(), PM25))
+	   if variable < 0 then variable = 0 end
+	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_PM25,variable,0,0,deviceID,deviceType)
 	   return pack:hex()
     end
     

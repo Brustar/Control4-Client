@@ -145,6 +145,16 @@ local server = {
 												    self:broadcast(cli , v)
 												end
 											 end
+
+                       if pack.deviceType == device.FRESHAIR then
+                        data = device:PM25(pack.deviceID,pack.deviceType)
+                        self:broadcast(cli , data)
+                       end
+
+                       if pack.deviceType == device.PM25 then
+                        data = device:PM25(pack.deviceID,pack.deviceType)
+                        self:broadcast(cli , data)
+                       end
 											 
 											 if pack.deviceType == device.TV or pack.deviceType == device.DVD or pack.deviceType == device.BGMUSIC then
 												data = device:volume(tostring(pack.deviceID),pack.deviceType)
