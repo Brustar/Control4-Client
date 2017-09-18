@@ -260,6 +260,11 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 			 C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), v)
 		  end
 	   end
+
+	   if pack.deviceType == device.FRESHAIR then
+	   	data = device:tempreture(pack.deviceID)
+	   	C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
+	   end
 	   
 	   if pack.deviceType == device.TV or pack.deviceType == device.DVD or pack.deviceType == device.BGMUSIC then
 		  data = device:volume(tostring(pack.deviceID),pack.deviceType)
@@ -273,7 +278,7 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 
 	   if pack.deviceType == device.PM25 then
 	   		data = device:PM25(pack.deviceID,pack.deviceType)
-		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
+		  	C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
 	   end
 	end
 
