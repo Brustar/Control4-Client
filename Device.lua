@@ -109,6 +109,12 @@ function Device:create(data)
 			 C4:SendToDevice(pack.deviceID, "DRY", {addr = pack.b})
 		  elseif pack.state == CMD_FAN then
 			 C4:SendToDevice(pack.deviceID, "FAN", {addr = pack.b})
+		  elseif pack.state == CMD_HIGH then
+			 C4:SendToDevice(pack.deviceID, "HIGH", {addr = pack.b})
+		  elseif pack.state == CMD_MIDDLE then
+			 C4:SendToDevice(pack.deviceID, "MIDDLE", {addr = pack.b})
+		  elseif pack.state == CMD_LOW then
+			 C4:SendToDevice(pack.deviceID, "LOW", {addr = pack.b})
 		  elseif pack.state == CMD_TEMPRETURE then
 			 if pack.r<30 and pack.r>15 then
 				C4:SendToDevice(pack.deviceID, "TEMPTURE", {degree = pack.r,addr = pack.b})
