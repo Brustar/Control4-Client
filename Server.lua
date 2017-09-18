@@ -141,20 +141,20 @@ local server = {
 											 end
 											 
 											 if pack.deviceType == device.AIRCONDITION then
-												for _,v in ipairs(device:envData()) do
+												for _,v in ipairs(device:envData(pack.deviceID)) do
 												    self:broadcast(cli , v)
 												end
 											 end
 
-                       if pack.deviceType == device.FRESHAIR then
-                        data = device:PM25(pack.deviceID,pack.deviceType)
-                        self:broadcast(cli , data)
-                       end
+											if pack.deviceType == device.FRESHAIR then
+											 data = device:tempreture(pack.deviceID)	
+											 self:broadcast(cli , data)
+											end
 
-                       if pack.deviceType == device.PM25 then
-                        data = device:PM25(pack.deviceID,pack.deviceType)
-                        self:broadcast(cli , data)
-                       end
+											if pack.deviceType == device.PM25 then
+											 data = device:PM25(pack.deviceID,pack.deviceType)
+											 self:broadcast(cli , data)
+											end
 											 
 											 if pack.deviceType == device.TV or pack.deviceType == device.DVD or pack.deviceType == device.BGMUSIC then
 												data = device:volume(tostring(pack.deviceID),pack.deviceType)
@@ -232,7 +232,7 @@ local server = {
                                                       -- code is the system error code (as a number)
                                                       -- msg is the error message as a string
                                                       -- op indicates what type of operation failed: "read", "write"
-                                                      Dbg:Debug("Server " .. tostring(srv) .. " Client " .. tostring(client) .. " Error " .. code .. " (" .. msg .. ") on " .. op)
+                                                      Dbg:Debug("Server " .. tostring(srv) .. " Client " .. tostring(client) .. " Error " .. code .. " (" .. msg .. ") on " .. (op or ""))
                                                end
                                         )
                                         :Write("")

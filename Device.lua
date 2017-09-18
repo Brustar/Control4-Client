@@ -57,6 +57,7 @@ VAR_HUMIDITY = 1138
 VAR_LEVEL_OPEN = 1000
 VAR_LEVEL = 1001
 CURRENT_VOLUME = 1011
+CURRENT_TEMPRETURE = 1003
 
 AMPLIFIER_ID = 329
 
@@ -71,7 +72,7 @@ function Device:create(data)
     
     device.LIGHT=0x02
     device.BLIND = 0x21
-    device.FRESHAIR = 0X30
+    device.FRESHAIR = 0x30
     device.AIRCONDITION = 0x31
     
     device.TV = 0x12
@@ -238,30 +239,18 @@ function Device:create(data)
 	   end
     end
     
-    function device:envData()
-	   local ret = {},idDevice,pack
+    function device:envData(deviceID)
+	   local ret = {}
 	   
-	   if Properties["Nest ID"] then
-		  local ids = string.split(Properties["Nest ID"])
-		  for _,id in ipairs(ids) do
-			 idDevice = tonumber(id)
-			 --湿度
-			 pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),PACK_HUMIDITY,tonumber(C4:GetVariable(idDevice, VAR_HUMIDITY)),0,0,idDevice)
-			 data = pack:hex()
-			 table.insert(ret,data)
-			 --温度
-			 pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_TEMPRETURE,tonumber(C4:GetVariable(idDevice, VAR_TEMPERATURE_C)),0,0,idDevice)
-			 local data = pack:hex()
-			 table.insert(ret,data)
-		  end
-	   else
-		  idDevice = tonumber(Properties["Aircondition ID"])
-		  pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_TEMPRETURE,tonumber(C4:GetVariable(idDevice, self:airDeviceVariableID(idDevice,"CURRENT_TEMPRETURE"))),0,0,idDevice)
-		  local data = pack:hex()
-		  table.insert(ret,data)
-	   end
+	   local data = self:tempreture(deviceID)
+	   table.insert(ret,data)
 	   
 	   return ret
+    end
+    
+    function device:tempreture(deviceID)
+	   pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_TEMPRETURE,tonumber(C4:GetVariable(deviceID, CURRENT_TEMPRETURE)),0,0,deviceID)
+	   return pack:hex()
     end
     
     function device:deviceState(deviceID,deviceType)

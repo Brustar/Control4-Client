@@ -96,18 +96,6 @@
         <readonly>false</readonly>
       </property>
       <property>
-        <name>Aircondition ID</name>
-        <type>STRING</type>
-        <default>322</default>
-        <readonly>false</readonly>
-      </property>
-      <property>
-        <name>Nest ID</name>
-        <type>STRING</type>
-        <readonly>true</readonly>
-        <default></default>
-      </property>
-      <property>
         <name>Http Status</name>
         <type>STRING</type>
         <default>ready to connect</default>

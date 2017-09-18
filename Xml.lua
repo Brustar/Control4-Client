@@ -35,7 +35,7 @@ function Xml:create(config)
 		  room.name = name
 		  table.insert(rooms , room)
 	   end
-	   C4:UpdateProperty("Nest ID", table.concat(self.nests,","))	-- 多个Nest
+	   --C4:UpdateProperty("Nest ID", table.concat(self.nests,","))	-- 多个Nest
 	   return rooms
     end
     
