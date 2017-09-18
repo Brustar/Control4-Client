@@ -10,9 +10,9 @@ CMD_TOGGLE = 0x33
 CMD_RAMP = 0x1A
 CMD_COLOR = 0x1B
 CMD_HEAT = 0x39
-CMD_COOL = 0x3A
-CMD_DRY = 0x3B
-CMD_FAN = 0x3C
+CMD_COOL = 0x40
+CMD_DRY = 0x42
+CMD_FAN = 0x41
 CMD_TEMPRETURE = 0x6A
 CMD_HIGH = 0x35
 CMD_MIDDLE = 0x36
@@ -56,6 +56,7 @@ VAR_HUMIDITY = 1138
 
 VAR_LEVEL_OPEN = 1000
 VAR_LEVEL = 1001
+VAR_MODE = 1002
 CURRENT_VOLUME = 1011
 CURRENT_TEMPRETURE = 1003
 
@@ -250,7 +251,13 @@ function Device:create(data)
 	   
 	   local data = self:tempreture(deviceID)
 	   table.insert(ret,data)
-	   
+
+	   data = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(C4:GetVariable(deviceID, VAR_LEVEL)),0,0,0,deviceID)
+	   table.insert(ret,data)
+
+	   --data = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),0x18,tonumber(C4:GetVariable(deviceID, VAR_MODE)),0,0,deviceID)
+	   --table.insert(ret,data)
+
 	   return ret
     end
     
