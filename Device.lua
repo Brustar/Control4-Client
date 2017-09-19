@@ -249,7 +249,7 @@ function Device:create(data)
     end
     
     function device:envData(deviceID)
-    	C4:SendToDevice(pack.deviceID,"QUERY",{addr = pack.b})
+    	C4:SendToDevice(deviceID,"QUERY",{addr = pack.b})
 	   local ret = {}
 	   
 	   local data = self:tempreture(deviceID)
