@@ -274,12 +274,7 @@ function Device:create(data)
     	pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(C4:GetVariable(deviceID, FRESH_STATE)),0,0,0,deviceID)
 	   	return pack:hex()
     end
-
-    function device:blindState(deviceID)
-    	pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(C4:GetVariable(deviceID, VAR_LEVEL)),0,0,0,deviceID)
-	   	return pack:hex()
-    end
-    
+    -- include light,blind
     function device:deviceState(deviceID,deviceType)
 	   if deviceType == self.BGMUSIC then
 		  return nil

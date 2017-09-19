@@ -255,10 +255,6 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 		  C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
 	   end
 
-	   if pack.deviceType = device.BLIND then
-	   		data = device:blindState(pack.deviceID)
-	   		C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
-	   end
 	   if pack.deviceType == device.AIRCONDITION then
 		  for _,v in ipairs(device:envData()) do
 			 hexdump(v, function(s) Dbg:Debug("------>" .. s) end)
