@@ -60,6 +60,8 @@ VAR_MODE = 1002
 CURRENT_VOLUME = 1011
 CURRENT_TEMPRETURE = 1003
 
+FRESH_STATE = 1007
+
 AMPLIFIER_ID = 329
 
 CURRENT_MEDIA = 1031
@@ -247,6 +249,7 @@ function Device:create(data)
     end
     
     function device:envData(deviceID)
+    	C4:SendToDevice(pack.deviceID,"QUERY",{addr = pack.b})
 	   local ret = {}
 	   
 	   local data = self:tempreture(deviceID)
@@ -264,6 +267,17 @@ function Device:create(data)
     function device:tempreture(deviceID)
 	   pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_TEMPRETURE,tonumber(C4:GetVariable(deviceID, CURRENT_TEMPRETURE)),0,0,deviceID)
 	   return pack:hex()
+    end
+
+    function device:freshState(deviceID)
+    	C4:SendToDevice(deviceID,"FRESH_READ",{})
+    	pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(C4:GetVariable(deviceID, FRESH_STATE)),0,0,0,deviceID)
+	   	return pack:hex()
+    end
+
+    function device:blindState(deviceID)
+    	pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(C4:GetVariable(deviceID, VAR_LEVEL)),0,0,0,deviceID)
+	   	return pack:hex()
     end
     
     function device:deviceState(deviceID,deviceType)

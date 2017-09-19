@@ -139,6 +139,11 @@ local server = {
 												hexdump(data, function(s) Dbg:Debug("server:------>" .. s) end)
 												self:broadcast(cli , data)
 											 end
+
+                       if pack.deviceType == device.BLIND then
+                        data = device:blindState(pack.deviceID)
+                        self:broadcast(cli , data)
+                       end
 											 
 											 if pack.deviceType == device.AIRCONDITION then
 												for _,v in ipairs(device:envData(pack.deviceID)) do
@@ -149,6 +154,8 @@ local server = {
 											if pack.deviceType == device.FRESHAIR then
 											 data = device:tempreture(pack.deviceID)	
 											 self:broadcast(cli , data)
+                       data = device:freshState(pack.deviceID)
+                       self:broadcast(cli , data)
 											end
 
 											if pack.deviceType == device.PM25 then
