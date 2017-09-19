@@ -255,7 +255,7 @@ function Device:create(data)
 	   local data = self:tempreture(deviceID)
 	   table.insert(ret,data)
 
-	   data = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(C4:GetVariable(deviceID, VAR_LEVEL)),0,0,0,deviceID)
+	   data = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(C4:GetVariable(deviceID, VAR_LEVEL)),0,0,0,deviceID):hex()
 	   table.insert(ret,data)
 
 	   --data = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),0x18,tonumber(C4:GetVariable(deviceID, VAR_MODE)),0,0,deviceID)
