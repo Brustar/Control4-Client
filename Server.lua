@@ -141,7 +141,7 @@ local server = {
 											 end
 											 
 											 if pack.deviceType == device.AIRCONDITION then
-												for _,v in ipairs(device:envData(pack.deviceID)) do
+												for _,v in ipairs(device:envData(pack.deviceID,pack.b)) do
 												    self:broadcast(cli , v)
 												end
 											 end
