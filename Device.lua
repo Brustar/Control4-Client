@@ -41,7 +41,7 @@ CMD_VOLUME_DOWN = 0x03
 
 CMD_MUTE_TOGGLE = 0x04
 CMD_SET_VOLUME_LEVEL = 0xAA
-CMD_PM25 = 0x7A
+CMD_PM25 = 0x7F
 
 CMD_SCHEDULE = 0x8A
 CMD_SCHEDULE_RESET = 0x8C
@@ -68,7 +68,7 @@ AMPLIFIER_ID = 329
 
 CURRENT_MEDIA = 1031
 
-PM25 = 1145  --C4:GetVariable(375,1145)
+VAR_PM25 = 1145  --C4:GetVariable(375,1145)
 
 function Device:create(data)
 
@@ -91,6 +91,7 @@ function Device:create(data)
     device.CAMERA = 0x45
     device.LOCK = 0x40
     device.AMPLIFIER = 0x18
+    device.PM25 = 0x37	
     
     function device:handle()
 	   local pack = self.data
@@ -299,8 +300,8 @@ function Device:create(data)
 	   return pack:hex()
     end
 
-    function device:PM25(deviceID,deviceType)
-    	local variable = tonumber(C4:GetVariable(C4:RoomGetId(), PM25))
+    function device:PM25FB(deviceID,deviceType)
+    	local variable = tonumber(C4:GetVariable(deviceID, VAR_PM25))
 	   if variable < 0 then variable = 0 end
 	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_PM25,variable,0,0,deviceID,deviceType)
 	   return pack:hex()

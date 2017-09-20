@@ -154,7 +154,7 @@ local server = {
 											end
 
 											if pack.deviceType == device.PM25 then
-											 data = device:PM25(pack.deviceID,pack.deviceType)
+											 data = device:PM25FB(pack.deviceID,pack.deviceType)
 											 self:broadcast(cli , data)
 											end
 											 

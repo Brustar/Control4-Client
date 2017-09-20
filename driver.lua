@@ -280,7 +280,7 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	   end
 
 	   if pack.deviceType == device.PM25 then
-	   		data = device:PM25(pack.deviceID,pack.deviceType)
+	   		data = device:PM25FB(pack.deviceID,pack.deviceType)
 		  	C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
 	   end
 	end
