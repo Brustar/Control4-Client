@@ -13,7 +13,8 @@ CMD_HEAT = 0x39
 CMD_COOL = 0x40
 CMD_DRY = 0x42
 CMD_FAN = 0x41
-CMD_TEMPRETURE = 0x6A
+CMD_TEMPRETURE = 0x6B
+CMD_SET_TEMPRETURE = 0x6A
 CMD_HIGH = 0x35
 CMD_MIDDLE = 0x36
 CMD_LOW = 0x37
@@ -59,6 +60,7 @@ VAR_LEVEL = 1001
 VAR_MODE = 1002
 CURRENT_VOLUME = 1011
 CURRENT_TEMPRETURE = 1003
+VAR_SETTEMP = 1008
 
 FRESH_STATE = 1007
 
@@ -258,8 +260,8 @@ function Device:create(data)
 	   data = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(C4:GetVariable(deviceID, VAR_LEVEL)),0,0,0,deviceID,deviceType):hex()
 	   table.insert(ret,data)
 
-	   --data = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),0x18,tonumber(C4:GetVariable(deviceID, VAR_MODE)),0,0,deviceID)
-	   --table.insert(ret,data)
+	   data = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_SET_TEMPRETURE,tonumber(C4:GetVariable(deviceID, VAR_SETTEMP)),0,0,deviceID,deviceType):hex()
+	   table.insert(ret,data)
 
 	   return ret
     end
