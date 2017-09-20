@@ -281,9 +281,9 @@ function Device:create(data)
 	   return pack:hex()
     end
 
-    function device:freshState(deviceID)
+    function device:freshState(deviceID,deviceType)
     	C4:SendToDevice(deviceID,"FRESH_READ",{})
-    	pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(C4:GetVariable(deviceID, FRESH_STATE)),0,0,0,deviceID)
+    	pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(C4:GetVariable(deviceID, FRESH_STATE)),0,0,0,deviceID,deviceType)
 	   	return pack:hex()
     end
     -- include light,blind

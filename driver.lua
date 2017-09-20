@@ -263,9 +263,9 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	   end
 
 	   if pack.deviceType == device.FRESHAIR then
-	   	data = device:tempreture(pack.deviceID,deviceType)
+	   	data = device:tempreture(pack.deviceID,pack.deviceType)
 	   	C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
-	   	data = device:freshState(pack.deviceID)
+	   	data = device:freshState(pack.deviceID,pack.deviceType)
 	   	C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
 	   end
 	   

@@ -147,9 +147,9 @@ local server = {
 											 end
 
 											if pack.deviceType == device.FRESHAIR then
-											 data = device:tempreture(pack.deviceID,deviceType)	
+											 data = device:tempreture(pack.deviceID,pack.deviceType)	
 											 self:broadcast(cli , data)
-											 data = device:freshState(pack.deviceID)
+											 data = device:freshState(pack.deviceID,pack.deviceType)
 											 self:broadcast(cli , data)
 											end
 
