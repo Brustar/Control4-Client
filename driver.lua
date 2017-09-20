@@ -256,14 +256,14 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	   end
 
 	   if pack.deviceType == device.AIRCONDITION then
-		  for _,v in ipairs(device:envData(pack.deviceID,pack.b)) do
+		  for _,v in ipairs(device:envData(pack.deviceID,deviceType,pack.b)) do
 			 hexdump(v, function(s) Dbg:Debug("------>" .. s) end)
 			 C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), v)
 		  end
 	   end
 
 	   if pack.deviceType == device.FRESHAIR then
-	   	data = device:tempreture(pack.deviceID)
+	   	data = device:tempreture(pack.deviceID,deviceType)
 	   	C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)
 	   	data = device:freshState(pack.deviceID)
 	   	C4:SendToNetwork(SUB_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), data)

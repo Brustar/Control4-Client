@@ -248,14 +248,14 @@ function Device:create(data)
 	   end
     end
     
-    function device:envData(deviceID,roomId)
+    function device:envData(deviceID,deviceType,roomId)
     	C4:SendToDevice(deviceID,"QUERY",{addr = roomId})
 	   local ret = {}
 	   
-	   local data = self:tempreture(deviceID)
+	   local data = self:tempreture(deviceID,deviceType)
 	   table.insert(ret,data)
 
-	   data = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(C4:GetVariable(deviceID, VAR_LEVEL)),0,0,0,deviceID):hex()
+	   data = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(C4:GetVariable(deviceID, VAR_LEVEL)),0,0,0,deviceID,deviceType):hex()
 	   table.insert(ret,data)
 
 	   --data = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),0x18,tonumber(C4:GetVariable(deviceID, VAR_MODE)),0,0,deviceID)
@@ -264,8 +264,8 @@ function Device:create(data)
 	   return ret
     end
     
-    function device:tempreture(deviceID)
-	   pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_TEMPRETURE,tonumber(C4:GetVariable(deviceID, CURRENT_TEMPRETURE)),0,0,deviceID)
+    function device:tempreture(deviceID,deviceType)
+	   pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_TEMPRETURE,tonumber(C4:GetVariable(deviceID, CURRENT_TEMPRETURE)),0,0,deviceID,deviceType)
 	   return pack:hex()
     end
 
