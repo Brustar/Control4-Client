@@ -291,8 +291,12 @@ function Device:create(data)
 	   if deviceType == self.BGMUSIC then
 		  return nil
 	   end
-	   local variable = C4:GetVariable(deviceID, VAR_LEVEL_OPEN) or "0"
-	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(variable),0,0,0,deviceID,deviceType)
+	   local variable = C4:GetVariable(deviceID, VAR_LEVEL_OPEN)
+	   local state = 0
+	   if variable == "true" then
+	   	state = 1
+	   end
+	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),state,0,0,0,deviceID,deviceType)
 	   return pack:hex()
     end
     
