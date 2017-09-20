@@ -291,7 +291,7 @@ function Device:create(data)
 	   if deviceType == self.BGMUSIC then
 		  return nil
 	   end
-	   local variable = C4:GetVariable(deviceID, VAR_LEVEL_OPEN)
+	   local variable = C4:GetVariable(deviceID, FRESH_STATE)
 	   local state = 0
 	   if variable == "true" then
 	   	state = 1
