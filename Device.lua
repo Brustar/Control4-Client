@@ -323,8 +323,9 @@ function Device:create(data)
     function device:PM25FB(deviceID,deviceType)
     	local variable = C4:GetVariable(deviceID, VAR_PM25)
     	local reg = "PM2.5:%s?(%d+)"
-    	local pm = tonumber(variable:match(reg))
+    	local pm = checkVariable(variable:match(reg))
 	   if pm < 0 then pm = 0 end
+	   if pm > 256 then pm = pm % 256 end
 	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_PM25,pm,0,0,deviceID,deviceType)
 	   return pack:hex()
     end
@@ -401,7 +402,7 @@ end
 function checkVariable(v)
 	local value = 0
     if v then 
-    	value = tonumber(value)
+    	value = tonumber(v)
     end
     return value
 end
