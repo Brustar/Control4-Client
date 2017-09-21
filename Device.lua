@@ -71,7 +71,7 @@ AMPLIFIER_ID = 329
 
 CURRENT_MEDIA = 1031
 
-VAR_PM25 = 1145  --C4:GetVariable(375,1145)
+VAR_PM25 = 1145 
 
 function Device:create(data)
 
@@ -247,6 +247,9 @@ function Device:create(data)
     end
     
     function device:switch(pack)
+    	if pack.deviceType == self.AIRCONDITION or pack.deviceType == self.FRESHAIR then
+    		return
+    	end
 	   if pack.state == CMD_ON then
 		  C4:SendToDevice(pack.deviceID,"ON",{})
 	   elseif pack.state == CMD_OFF then
@@ -261,29 +264,33 @@ function Device:create(data)
 	   local data = self:tempreture(deviceID,deviceType)
 	   table.insert(ret,data)
 
-	   data = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(C4:GetVariable(deviceID, VAR_LEVEL)),0,0,0,deviceID,deviceType):hex()
+	   local value = checkVariable(C4:GetVariable(deviceID, VAR_LEVEL))
+	   local master = tonumber(Properties["masterID"])
+	   data = Pack:create(CMD_UPLOAD,master,value,0,0,0,deviceID,deviceType):hex()
 	   table.insert(ret,data)
-
-	   data = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_SET_TEMPRETURE,tonumber(C4:GetVariable(deviceID, VAR_SETTEMP)),0,0,deviceID,deviceType):hex()
+	   value = checkVariable(C4:GetVariable(deviceID, VAR_SETTEMP))
+	   data = Pack:create(CMD_UPLOAD,master,CMD_SET_TEMPRETURE,value,0,0,deviceID,deviceType):hex()
 	   table.insert(ret,data)
-
-	   data = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_MODE,tonumber(C4:GetVariable(deviceID, VAR_MODE)),0,0,deviceID,deviceType):hex()
+	   value = checkVariable(C4:GetVariable(deviceID, VAR_MODE))
+	   data = Pack:create(CMD_UPLOAD,master,CMD_MODE,value,0,0,deviceID,deviceType):hex()
 	   table.insert(ret,data)
-
-	   data = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_SPEED,tonumber(C4:GetVariable(deviceID, VAR_SPEED)),0,0,deviceID,deviceType):hex()
+	   value = checkVariable(C4:GetVariable(deviceID, VAR_SPEED))
+	   data = Pack:create(CMD_UPLOAD,master,CMD_SPEED,value,0,0,deviceID,deviceType):hex()
 	   table.insert(ret,data)
 
 	   return ret
     end
     
     function device:tempreture(deviceID,deviceType)
-	   pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_TEMPRETURE,tonumber(C4:GetVariable(deviceID, CURRENT_TEMPRETURE)),0,0,deviceID,deviceType)
+    	local value = checkVariable(C4:GetVariable(deviceID, CURRENT_TEMPRETURE))
+	   pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_TEMPRETURE,value,0,0,deviceID,deviceType)
 	   return pack:hex()
     end
 
     function device:freshState(deviceID,deviceType)
     	C4:SendToDevice(deviceID,"FRESH_READ",{})
-    	pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),tonumber(C4:GetVariable(deviceID, FRESH_STATE)),0,0,0,deviceID,deviceType)
+    	local value = checkVariable(C4:GetVariable(deviceID, FRESH_STATE))
+    	pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),value,0,0,0,deviceID,deviceType)
 	   	return pack:hex()
     end
     -- include light,blind
@@ -301,13 +308,13 @@ function Device:create(data)
     end
     
     function device:deviceLevel(deviceID,deviceType)
-	   local variable = C4:GetVariable(deviceID, VAR_LEVEL) or "0"
-	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_RAMP,tonumber(variable),0,0,deviceID,deviceType)
+	   local value = checkVariable(C4:GetVariable(deviceID, VAR_LEVEL))
+	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_RAMP,value,0,0,deviceID,deviceType)
 	   return pack:hex()
     end
     
     function device:volume(deviceID,deviceType)
-	   local variable = tonumber(C4:GetVariable(C4:RoomGetId(), CURRENT_VOLUME))
+    	local variable = checkVariable(C4:GetVariable(C4:RoomGetId(), CURRENT_VOLUME))
 	   if variable < 0 then variable = 0 end
 	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_SET_VOLUME_LEVEL,variable,0,0,deviceID,deviceType)
 	   return pack:hex()
@@ -389,4 +396,12 @@ function string.split(str, delimiter)
     end
     table.insert(arr, string.sub(str, pos))
     return arr
+end
+
+function checkVariable(v)
+	local value = 0
+    if v then 
+    	value = tonumber(value)
+    end
+    return value
 end
