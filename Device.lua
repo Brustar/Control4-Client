@@ -94,7 +94,7 @@ function Device:create(data)
     device.CAMERA = 0x45
     device.LOCK = 0x40
     device.AMPLIFIER = 0x18
-    device.PM25 = 0x37	
+    device.PM25 = 0x55	
     
     function device:handle()
 	   local pack = self.data
