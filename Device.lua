@@ -260,36 +260,40 @@ function Device:create(data)
     function device:envData(deviceID,deviceType,roomId)
     	C4:SendToDevice(deviceID,"QUERY",{addr = roomId})
 	   local ret = {}
-	   
-	   local data = self:tempreture(deviceID,deviceType)
+	   local data = self:tempreture(deviceID,deviceType,roomId)
 	   table.insert(ret,data)
 
 	   local value = checkVariable(C4:GetVariable(deviceID, VAR_LEVEL))
 	   local master = tonumber(Properties["masterID"])
-	   data = Pack:create(CMD_UPLOAD,master,value,0,0,0,deviceID,deviceType):hex()
+	   data = Pack:create(CMD_UPLOAD,master,value,0,0,roomId,deviceID,deviceType):hex()
 	   table.insert(ret,data)
 	   value = checkVariable(C4:GetVariable(deviceID, VAR_SETTEMP))
-	   data = Pack:create(CMD_UPLOAD,master,CMD_SET_TEMPRETURE,value,0,0,deviceID,deviceType):hex()
+	   data = Pack:create(CMD_UPLOAD,master,CMD_SET_TEMPRETURE,value,0,roomId,deviceID,deviceType):hex()
 	   table.insert(ret,data)
 	   value = checkVariable(C4:GetVariable(deviceID, VAR_MODE))
-	   data = Pack:create(CMD_UPLOAD,master,CMD_MODE,value,0,0,deviceID,deviceType):hex()
+	   data = Pack:create(CMD_UPLOAD,master,CMD_MODE,value,0,roomId,deviceID,deviceType):hex()
 	   table.insert(ret,data)
 	   value = checkVariable(C4:GetVariable(deviceID, VAR_SPEED))
-	   data = Pack:create(CMD_UPLOAD,master,CMD_SPEED,value,0,0,deviceID,deviceType):hex()
+	   data = Pack:create(CMD_UPLOAD,master,CMD_SPEED,value,0,roomId,deviceID,deviceType):hex()
 	   table.insert(ret,data)
 
 	   return ret
     end
     
-    function device:tempreture(deviceID,deviceType)
+    function device:tempreture(deviceID,deviceType,roomId)
+	   roomId = roomId or 0
     	local value = checkVariable(C4:GetVariable(deviceID, CURRENT_TEMPRETURE))
-	   pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_TEMPRETURE,value,0,0,deviceID,deviceType)
+	   pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),CMD_TEMPRETURE,value,0,roomId,deviceID,deviceType)
 	   return pack:hex()
     end
 
     function device:freshState(deviceID,deviceType)
     	C4:SendToDevice(deviceID,"FRESH_READ",{})
-    	local value = checkVariable(C4:GetVariable(deviceID, FRESH_STATE))
+	local var = C4:GetVariable(deviceID, FRESH_STATE)
+	local value = 0
+	if var == "true" then
+	   value = 1
+	end
     	pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),value,0,0,0,deviceID,deviceType)
 	   	return pack:hex()
     end
@@ -298,11 +302,8 @@ function Device:create(data)
 	   if deviceType == self.BGMUSIC or deviceType == self.PM25 or deviceType == self.AIRCONDITION or deviceType == self.FRESHAIR then
 		  return nil
 	   end
-	   local variable = C4:GetVariable(deviceID, VAR_LEVEL_OPEN)
-	   local state = 0
-	   if variable == "true" then
-	   	state = 1
-	   end
+	   local state = C4:GetVariable(deviceID, VAR_LEVEL_OPEN)
+
 	   local pack = Pack:create(CMD_UPLOAD,tonumber(Properties["masterID"]),state,0,0,0,deviceID,deviceType)
 	   return pack:hex()
     end
