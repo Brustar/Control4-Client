@@ -221,7 +221,7 @@ function ReceivedFromNetwork(idBinding, nPort, strData)
 	   local port = pack.deviceID
 	   C4:NetDisconnect(MAIN_SOCKET_BINDINGID, tonumber(Properties["TCP Port"]), "TCP")
 	   
-	   C4:UpdateProperty("TCP Address",ip)
+	   --C4:UpdateProperty("TCP Address",ip)
 	   C4:UpdateProperty("TCP Port",port)
 	   C4:CreateNetworkConnection(SUB_SOCKET_BINDINGID, ip)
 	   C4:NetConnect(SUB_SOCKET_BINDINGID, port, "TCP")
