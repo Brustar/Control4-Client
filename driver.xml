@@ -13,8 +13,8 @@
   <controlmethod>ip</controlmethod>
   <driver>DriverWorks</driver>
   <templatedescription>Base Template, used in all templates.</templatedescription>
-  <combo>True</combo>
   <OnlineCategory>others</OnlineCategory>
+  <combo>true</combo>
   <proxies qty="1">
     <proxy>base_template</proxy>
   </proxies>
@@ -69,7 +69,7 @@
         <name>TCP Address</name>
         <type>STRING</type>
         <readonly>false</readonly>
-        <default>115.28.151.85</default>
+        <default>tp.e-cloudcn.com</default>
       </property>
       <property>
         <name>TCP Port</name>
@@ -80,7 +80,7 @@
       <property>
         <name>HTTP Address</name>
         <type>STRING</type>
-        <default>115.28.151.85</default>
+        <default>h5.e-cloudcn.com</default>
         <readonly>false</readonly>
       </property>
       <property>
@@ -92,7 +92,7 @@
       <property>
         <name>masterID</name>
         <type>STRING</type>
-        <default>33025</default>
+        <default></default>
         <readonly>false</readonly>
       </property>
       <property>

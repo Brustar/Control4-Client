@@ -13,7 +13,6 @@ require "Scheduler"
 	Command Handler Tables
 --]]
 EX_CMD = {}
-PRX_CMD = {}
 NOTIFY = {}
 DEV_MSG = {}
 LUA_ACTION = {}
@@ -331,52 +330,6 @@ function OnConnectionStatusChanged(idBinding, nPort, strStatus)
 		  connectEcloudServer(idBinding)
 	   end
     end
-end
-
----------------------------------------------------------------------
--- ReceivedFromProxy Code
----------------------------------------------------------------------
---[[
-	ReceivedFromProxy(idBinding, sCommand, tParams)
-		Function called by Director when a proxy bound to the specified binding sends a
-		BindMessage to the DriverWorks driver.
-
-	Parameters
-		idBinding
-			Binding ID of the proxy that sent a BindMessage to the DriverWorks driver.
-		sCommand
-			Command that was sent
-		tParams
-			Lua table of received command parameters
---]]
-function ReceivedFromProxy(idBinding, sCommand, tParams)
-	if (sCommand ~= nil) then
-		if(tParams == nil)		-- initial table variable if nil
-			then tParams = {}
-		end
-		Dbg:Trace("ReceivedFromProxy(): " .. sCommand .. " on binding " .. idBinding .. "; Call Function " .. sCommand .. "()")
-		Dbg:Info(tParams)
-
-		if (PRX_CMD[sCommand]) ~= nil then
-			PRX_CMD[sCommand](idBinding, tParams)
-		else
-			Dbg:Alert("ReceivedFromProxy: Unhandled command = " .. sCommand)
-		end
-	end
-end
-
----------------------------------------------------------------------
--- Notification Code
----------------------------------------------------------------------
--- notify with parameters
-function SendNotify(notifyText, Parms, bindingID)
-	C4:SendToProxy(bindingID, notifyText, Parms, "NOTIFY")
-end
-
--- A notify with no parameters
-function SendSimpleNotify(notifyText, ...)
-	bindingID = select(1, ...) or DEFAULT_PROXY_BINDINGID
-	C4:SendToProxy(bindingID, notifyText, {}, "NOTIFY")
 end
 
 ---------------------------------------------------------------------
